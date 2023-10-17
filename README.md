@@ -14,14 +14,14 @@ Ce cours se déroule dans le cadre du master journalisme de l'[Institut Pratique
 ## Programme
 
 
-| Jour | Module | Thématique | 
-| :-----: | :-----: |  -----: | 
-| 19/10/2020 | Cours01 | Introduction à R et à la programmation | 
-| 10/11/2020 | Cours02 | Récupérer et charger des données | 
-| 23/11/2020 | Cours03 | Nettoyer et manipuler des données | 
-| 01/12/2020 | Cours04 | Analyser des données | 
-| 04/12/2020 | Cours05 | Visualiser des données en R | 
-|  | Cours06 | Introduction à l'analyse exploratoire de données | 
+| Jour | Module | Thématique |
+| :-----: | :-----: |  -----: |
+| 19/10/2023 matin | Cours01 | Introduction à R et à la programmation |
+| 19/10/2023 après-midi | Cours02 | Récupérer et charger des données |
+| 20/10/2023 matin | Cours03 | Nettoyer et manipuler des données |
+| 20/10/2023 après-midi | Cours04 | Analyser des données |
+| 08/12/2020 matin | Cours05 | Visualiser des données en R | 
+| 08/12/2020 après-midi | Cours06 | Introduction à l'analyse exploratoire de données | 
 
 ------
 
@@ -52,18 +52,22 @@ sudo apt install libxml2-dev
 
 
 ### Packages R
-1. {tidyverse} ;
-2. {data.table} ;
-3. {devtools} ;
-4. {rvest}.
+* {tidyverse} ;
+* {data.table} ;
+* {devtools} ;
+* {rvest} ;
+* {lubridate} ;
+* {viridis} ;
+* {RColorBrewer}.
+
 
 ## Support
 
-* Cours01 : [R, votre nouvel outil](https://sylvainlapoix.github.io/ipj_ddj_20202021/cours01/#1)
-* Cours02 : [Sourcer et lire les données en R](https://sylvainlapoix.github.io/ipj_ddj_20202021/cours02/#1)
-* Cours03 : [Nettoyer et manipuler des données en R](https://sylvainlapoix.github.io/ipj_ddj_20202021/cours03/#1)
-* Cours04 : [Analyse de données en R](https://sylvainlapoix.github.io/ipj_ddj_20202021/cours04/#1)
-* Cours05 : [Visualiser des données en R](https://sylvainlapoix.github.io/ipj_ddj_20202021/cours05/#1)
+* Cours01 : [R, votre nouvel outil](https://sylvainlapoix.github.io/ipj_ddj/cours01/#1)
+* Cours02 : [Sourcer et lire les données en R](https://sylvainlapoix.github.io/ipj_ddj/cours02/#1)
+* Cours03 : [Nettoyer et manipuler des données en R](https://sylvainlapoix.github.io/ipj_ddj/cours03/#1)
+* Cours04 : [Analyse de données en R](https://sylvainlapoix.github.io/ipj_ddj/cours04/#1)
+* Cours05 : [Visualiser des données en R](https://sylvainlapoix.github.io/ipj_ddj/cours05/#1)
 * Cours06 : à venir
 
 ## Bases de données utilisées
@@ -81,7 +85,7 @@ sudo apt install libxml2-dev
 * [Base Nationale des Lieux de Covoiturage](https://www.data.gouv.fr/en/datasets/base-nationale-des-lieux-de-covoiturage/), Point d'Accès National transport.data.gouv.fr, 2020.
 
 ### cours05
-* [Produits du tabac et produits connexes déclarés sur le marché français](https://www.data.gouv.fr/fr/datasets/produits-du-tabac-et-produits-connexes-declares-sur-le-marche-francais/), Anses, 2020.
+* à venir 
 
 ### cours06
 * à venir
@@ -107,5 +111,5 @@ sudo apt install libxml2-dev
 * [Strings - Maching patterns with regular expressions in R for data science](https://r4ds.had.co.nz/strings.html), Hadley Wickham ;
 * [les regex avec StringR](https://stringr.tidyverse.org/articles/regular-expressions.html), documentation {tidyverse}.
 
-### Sur ggplot2
+### Sur ggplot2
 * [le site officiel de la librairie](https://ggplot2.tidyverse.org/reference/), sur le portail du {tidyverse}.
