@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>IPJ - Datajournalisme</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Sylvain Lapoix" />
+    <script src="libs/header-attrs-2.24/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# IPJ - Datajournalisme
+]
+.subtitle[
+## Cours 1 : utiliser R et lire des données
+]
+.author[
+### Sylvain Lapoix
+]
+.date[
+### 19/10/2023
+]
+
+---
+
+
+layout: true
+
+&lt;style type="text/css"&gt;
+
+.lr_bg{
+  background: black;
+  color: #f7c600;
+  font-weight: bold;
+}
+
+.pull-left-wide {
+  width: 65%;
+  float: left;
+}
+
+.pull-right-wide {
+  width: 65%;
+  float: right;
+}
+
+.pull-right-narrow {
+  width: 30%;
+  float: right;
+}
+
+.pull-left-narrow {
+  width: 30%;
+  float: left;
+}
+
+.quote {
+  font-family: 'Rokkitt';
+  font-weight: bold;
+  font-style: italic;
+  font-size: 28px;
+}
+
+
+.yellow-h{
+  background: #ffff88;
+}
+
+.blue-h{
+  background: #83c7fc;
+}
+
+
+.white-h{
+   color: #000000;
+   background: #FFFFFF;
+}
+
+.black-h{
+   color: #FFFFFF;
+   background: #000000;
+}
+
+
+&lt;/style&gt;
+
+---
+
+background-image: url("https://media.giphy.com/media/xT1R9ScK8XbiRQv70Y/giphy.gif")
+class: center, top, inverse
+
+# 1. Déroulement du cours
+
+---
+
+## Objectifs
+
+**Ce cours a pour vocation de vous initier à l'usage journalistique d'outils de programmation statistique (en l'occurence R).**
+
+Il couvrira sous un angle programmatique tous les aspects de la démarche journalistique :
+1. la recherche de source ;
+2. le traitement des informations ;
+3. leur mise en forme.
+
+Nous utiliserons donc de l'informatique, de la statistique, de l'épistémologie, de la bibliographie ...
+
+--
+
+### Mais pour faire du **journalisme**.
+
+La donnée est un moyen et non une fin.
+
+---
+
+## Trousse à outil
+
+1. [R (base)](https://www.r-project.org/) : notre langage de référence ;
+2. [Rstudio](https://rstudio.com/) : notre interface de base ;
+3. [Sublime Text 3](https://www.sublimetext.com/) : notre éditeur de texte de référence et outil à tout faire.
+
+--
+
+Ces outils nécessitent l'usage courant de plusieurs langages ou syntaxes :
+* **R**, langage de programmation statistique orienté objet ;
+* **Markdown**, syntaxe de mise en forme de texte ;
+* les **regex** (ou *expression régulière*), langage formel de description des chaînes de charactère ;
+* **Xpath**, langage de requêtes utilisé pour traiter les formats HTML et XML.
+
+Chacun de ces outils sera présenté, documenté et utilisé de manière concrète pendant le cours. La théorie sera réduite au strict minimum nécessaire, nous sommes dans un cours pratique.
+
+---
+
+## Fonctionnement de ce cours
+
+
+### Documentation
+L'intégralité des contenus utilisés durant le cours est disponible sur la page Github de ce cours : https://github.com/SylvainLapoix/ipj_ddj.
+
+Les slides de ce cours sont disponibles en format HTML à la page suivante : https://sylvainlapoix.github.io/ipj_ddj/cours01/
+
+### Communication
+Je vous propose de communiquer principalement par mail.
+
+Si vous notez des améliorations ou avez des corrections à apporter aux supports, vous pouvez déposer des *"Issues"* sur Github directement sur le repo : https://github.com/SylvainLapoix/ipj_ddj/issues
+
+### Evaluation
+Vous serez évaluées dans le cadre d'un travail final que nous débuterons lors des cours05 et cours06 et que vous aurez à finaliser par vous-mêmes pour rendu 
+
+
+---
+
+## Grands principes
+
+**Je vous encourage à vous tourner vers des solutions programmatiques et open source** pour le maximum de vos usages : la dépendance aux outils propriétaires (qu'ils soient payant ou gratuit) peut constituer une faiblesse voire un danger pour les journalistes (cf. [Google Fusion Tables](https://www.fastcompany.com/90279779/rip-fusion-tables-google-is-killing-off-the-beloved-data-visualization-tool) et autres plantages).
+
+Ce cours est la deuxième itération d'une tentative d'initier des apprenti·es journalistes à la programmation, il se construira avec vous : vos retours, vos suggestions, vos trouvailles, vos critiques ...
+
+--
+
+... donc, **posez des questions, le maximum, dès que vous en ressentez le besoin : vous ferez avancer tout le monde, moi y compris**.
+
+Des pertes de temps considérables sont évitées chaque jour par l'application de bonnes habitudes :
+* **documentez** vos idées, vos réussites, vos erreurs, vos blocages ...
+* **interrogez** vos collègues, vos outils, la communauté ...
+* **partagez** vos trouvailles, vos bonnes pratiques et votre code.
+
+---
+
+
+.center[
+## Pourquoi programmer ?
+]
+
+--
+
+.center[
+## Mais oui, après tout, pourquoi ?
+]
+
+
+--
+
+
+.center[
+# POURQUOI ?????????
+]
+
+--
+
+.footnote[Calmez-vous, vous me faîtes peur.]
+
+---
+
+## Programmer en tant que journaliste 1/2
+
+Maîtriser un ou plusieurs langage de programmation, même à un niveau peu avancé, présente de nombreux avantages pour un·e journaliste :
+
+**1. accès aux sources**
+Le traitement programmatique donne accès à des sources autrement inaccessibles : APIs, registres massifs, bases de données, scraping ...
+
+**2. capacité de traitement**
+Les outils en interface graphique (ou *GUI*) ont des limites fortes en volume et complexité de traitement que la programmation permet de lever.
+
+**3. production de formats originaux**
+La programmation ouvre une large palette de formats inacessibles autrement : graphs, interactivité, expérience personnalisée, temps réel, etc.
+
+**4. compréhension technique**
+La manipulation même de l'outil informatique constitue une porte d'entrée dans la réalité technique d'une des composantes centrales de notre société (et donc de sujets qui la traversent).
+
+**5. reproductibilité**
+Là où les outils en *GUI* nécessitent de reprendre à zéro toute manipulation de données, la programmation permet de reproduire, affiner et perfectionner ses travaux.
+
+
+---
+
+## Programmer en tant que journaliste 2/2
+
+**6. communication avec d'autres métiers**
+Les langages et logiques de programmation constituent la base de la pratique de nombreux métiers, que ce soit dans l'informatique, la recherche ou l'industrie. Partager cette syntaxe facilite la communication et l'échange d'information ou de bonnes pratiques : une bonne occasion de s'inspirer de ces métiers pour mieux faire le vôtre.
+
+**7. rigueur et logique**
+Les logiques sous-jacentes à l'informatique reposent sur un rapport à l'information très différent de celui habituellement mobilisé dans le journalisme. Au déclaratif, contextuel et émotionnel, l'informatique substitue des systèmes de classification catégorielle, une nécessité de structuration de la pensée qui complète ce mode.
+
+--
+
+En un mot, et selon mon humble avis, l'informatique peut faire de vous de meilleur·es journalistes.
+
+
+---
+
+background-image: url("https://media.giphy.com/media/l4JyOCNEfXvVYEqB2/giphy.gif")
+class: center, top, inverse
+
+# 2. R, la base
+
+---
+
+## Pourquoi R ?
+
+R est un langage de programmation puissant, versatile et en perpétuelle amélioration conçu par et pour des usager·ères quotidien·nes de la donnée.
+
+Il bénéficie de plusieurs atouts clefs qui le rendent extrêmement pratique :
+* **une documentation détaillée et facile à trouver** ;
+* un large spectre **d'extension et de packages adaptés à tous les besoins** (cette présentation est, par exemple, intégralement réalisée en R) ;
+* **une forte interopérabilité avec nombres d'autres technologies et outils** (APIs, autres langages comme C, SQL, Javascript ou Python, etc.) ;
+* **une communauté étendue et accueillante** ;
+* et, cerise sur le gâteau, c'est **open source**.
+
+---
+
+background-image: url(https://media.giphy.com/media/Ae7SI3LoPYj8Q/giphy.gif)
+class: center, top
+## Avec R, vous ne serez jamais seul·e !
+
+---
+
+background-image: url("https://media.giphy.com/media/xA28qUvHKigcE/giphy.gif")
+class: center, bottom, inverse
+
+# L'heure de l'installation est venue !
+
+---
+
+## Rstudio : votre interface
+
+![](.../img/rstudio_interface.png)
+
+.footnote[Je vous recommande par ailleurs [les nombreuses "cheatsheet" mises à disposition par l'équipe de Rstudio](https://www.rstudio.com/resources/cheatsheets/).]
+
+
+---
+
+## La ligne de commande
+
+La **console** (ou "invite de commande") de R vous permet de réaliser des opérations sans utiliser l'interface graphique (GUI) : il s'agit d'une "interface en ligne de commande" (ou CLI).
+
+Elle permet de réaliser des opérations simples, lancer des scripts et tester des bouts de code.
+
+![](https://media.giphy.com/media/G6sJqVpD1U4jC/giphy.gif)
+
+---
+
+## Opérations simples
+
+R vous permet de réaliser toutes les opérations arithmétiques de base : il vous suffit de les saisir au clavier dans la console :
+
+
+```r
+2+5
+```
+
+```
+## [1] 7
+```
+
+```r
+3*5+231
+```
+
+```
+## [1] 246
+```
+
+```r
+# R gère également les priorités
+2*5+10
+```
+
+```
+## [1] 20
+```
+
+```r
+2*(5+10)
+```
+
+```
+## [1] 30
+```
+
+```r
+5%%2 # et les modulos
+```
+
+```
+## [1] 1
+```
+
+---
+
+## Variables
+
+Les variables sont des **objets** permettant de stocker une valeur, c'est-à-dire une donnée ou une structure de données (nous verrons ça dans un instant).
+
+
+
+
+```r
+effectif &lt;- 8
+effectif
+```
+
+```
+## [1] 8
+```
+
+```r
+effectif &lt;- 9 # On peut "réassigner" la valeur d'une variable à volonté
+effectif - 1 # et en manipuler la valeur
+```
+
+```
+## [1] 8
+```
+
+La valeur est **assignée** à la variable par `&lt;-` ou `=`.
+La valeur est une chaîne de caractères de longueur libre. Il existe cependant quelques restrictions : elle ne peut débuter par un chiffre (ex. 9efj) et certains mots sont dit "interdits" car ils correspondent à des variables définies par ailleurs.
+
+---
+
+### Rappel : type de données
+
+* numériques :
+  * integer ;
+  * double ;
+* character (chaînes de caractères) ;
+* logical (booléens)
+* autres (dates, geo, etc.)
+
+Quelques formats spéciaux :
+* \#N/A : marquer l'absence ou l'exclure quand c'est nécessaire.
+* null
+
+
+---
+
+## Structures de données 
+
+### Le vecteur (1/2)
+
+Les structures de données sont de objets qui permettent de stocker de manière organisées plusieurs valeurs. **La strucutre de référence de R est le vecteur** : une suite de valeur d'une seule dimension et du même type de données :
+
+```r
+prenoms &lt;- c("François","Etienne","Chloé","Thomas","Aimée")
+prenoms
+```
+
+```
+## [1] "François" "Etienne"  "Chloé"    "Thomas"   "Aimée"
+```
+
+**Toutes les structures de données de R peuvent être construites avec ou décomposées en vecteurs**.
+
+---
+
+### Le vecteur (2/2)
+
+Outre sa capacité à stocker, le vecteur permet aussi des opérations globales.
+
+Par exemple, si on réalise une opération arithmétique sur un vecteur contenant des valeurs numériques, l'opération sera appliquée à chaque valeur du vecteur :
+
+
+```r
+chiffres &lt;- c(1,2,3)
+chiffres * 3
+```
+
+```
+## [1] 3 6 9
+```
+
+--
+
+Cas réel : si vous souhaitez calculer la valeur TTC de montant hors taxe et que vous connaissez le taux, vous pouvez l'appliquer à une série de valeurs.
+
+
+```r
+ht &lt;- c(1000, 2150, 1080, 750)
+```
+
+
+--
+
+
+```r
+ht * 1.2
+```
+
+```
+## [1] 1200 2580 1296  900
+```
+
+---
+
+## Structures de données
+
+### Matrices
+Le format classique des maths : un type de données par structure.
+
+### Dataframes
+Le format "classique" des BDDs : un type de données par variable.
+
+A quoi s'ajoutent :
+* les lists ;
+* les facteurs ;
+* les tibbles (qui sont un autre nom des dataframes).
+
+---
+
+### Fabriquer une table
+
+Les structures de données peuvent être créées par plusieurs moyens. Le plus simple consiste à assembler des vecteurs comme des lignes ou des colonnes.
+
+Pour cela, nous utiliserons les fonctions `rbind()` pour assembler en lignes et `cbind()` pour assembler en colonnes.
+
+Prenons deux vecteurs :
+
+
+```r
+loups &lt;- c("canis lupus familiaris", "canis lupus italicus", "canis lupus arctos")
+meutes &lt;- c(8,10,20)
+```
+
+Nous pouvons les assembler en les mettant entre parenthèse après l'une des deux fonctions citée ci-dessus.
+
+Quel résultat obtenons-nous ?
+
+--
+
+
+```r
+cbind(loups, meutes)
+```
+
+```
+##      loups                    meutes
+## [1,] "canis lupus familiaris" "8"   
+## [2,] "canis lupus italicus"   "10"  
+## [3,] "canis lupus arctos"     "20"
+```
+
+```r
+rbind(loups, meutes)
+```
+
+```
+##        [,1]                     [,2]                   [,3]                
+## loups  "canis lupus familiaris" "canis lupus italicus" "canis lupus arctos"
+## meutes "8"                      "10"                   "20"
+```
+
+
+---
+
+### Coordonnées d'une valeur 1/2
+
+Toutes les structures de données offrent une **indexation numérique** des données, c'est-à-dire qu'elles permettent d'appeler une donnée en donnant une coordonnée chiffré (à un ou plusieurs chiffres).
+
+Un vecteur étant unidimensionnel, nous pourrons appeler n'importe quelle valeur avec le rang correspondant à son emplacement :
+
+```r
+loups &lt;- c("canis lupus familiaris", "canis lupus italicus", "canis lupus arctos")
+```
+
+Quel sera le résultat de `loups[2]` ?
+
+--
+
+```r
+loups[2]
+```
+
+```
+## [1] "canis lupus italicus"
+```
+
+Dans R, l'index débute à 1: le premier élément d'un vecteur est nomduvecteur[1], le 2è nomduvecteur[2], etc. Contrairement à certains langages ou il débute à 0 (comme C, Python, Java ...)
+
+---
+
+### Coordonnées d'une valeur 1/2
+
+
+Dans des structures de données à plusieurs dimensions, il faudra fournir autant d'index que de dimensions :
+
+```r
+cbind(loups, meutes)[2,1]
+```
+
+```
+##                  loups 
+## "canis lupus italicus"
+```
+
+Nous apprendrons plus tard (au cours03) comment sélectionner des données ou des sous-ensembles suivant des conditions appliquées aux données.
+
+
+
+---
+
+## Fonctions
+
+Une **fonction** est une opération que vous pouvez "appeler" en spécifiant les conditions de son exécution.
+
+En pratique, une fonction est appelée en écrivant son nom suivi d'une parenthèse ouverte puis refermée. La plupart des fonctions nécessitent **des arguments**, c'est-à-dire des paramètres qui doivent être listés dans la parenthèse dans un certain ordre ou suivant une certaine nomenclature. Certains arguments sont obligatoires, d'autres facultatifs.
+
+Une fonction peut être utilisée dans la ligne de commande ou dans un script.
+
+--
+
+#### Premier exemple
+
+Quel résultat obtenez-vous en tapant `getwd()` dans votre console ?
+A quoi correspond-il ?
+
+---
+
+### Aparté : trouver de la documentation
+
+Rstudio intègre deux outils simples pour accéder rapidement à la documentation des fonctions :
+* l'onglet "Help" dans le panneau inférieur droit ;
+* les préfixes `?` et  `??` à ajouter avant une fonction dans la console.
+
+
+```r
+?getwd
+```
+
+--
+
+Vous pouvez également chercher sur Google mais Rstudio embarque déjà une très grande quantité de données.
+
+---
+
+### Autres exemples de fonctions
+
+Fonctions exploratoires de base
+* summary()
+* typeof()
+* class()
+* lengh()
+* names()
+* trier avec order()
+
+Trucs utiles :
+* sample()
+
+---
+
+## Packages
+
+Les packages sont des collections de fonctions, souvent organisées autour d'une thématique.
+
+### Les packages que nous utiliserons dans ce cours
+
+* le [Tidyverse](https://www.tidyverse.org/) : comme son nom l'indique, il s'agit d'un ensemble de package autour de la notion de "tidy data" :
+  * **readr** : pour lire des fichiers ;
+  * **tibble** : pour organiser les données dans une structure performante, le *tibble* ;
+  * **tidyr** : pour réorganiser les données ;
+  * **dplyr** : pour manipuler les données ;
+  * **ggplot2** : pour visualiser les données ;
+  * **purrr** : pour la programmation fonctionnelle (utilisation avancée) ;
+* [rvest](https://github.com/tidyverse/rvest) : pour scraper des données sur le web ;
+* [data.table](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html) : une variante du Tidyverse, dont je vous conseille surtout la fonction `fread()` pour lire les gros fichiers ;
+* [devtools](https://github.com/r-lib/devtools) : pour installer certains packages non intégré aux serveurs Cran.
+
+---
+
+### Installer et appeler un package
+
+Vous pouvez gérer vos packages via l'interface graphique (dans "Tools") ou via la console (comme d'habitude quoi !). Si vous choisissez cette 2de option, quelques fonctions vous suffiront à couvrir presque tous vos besoins :
+
+* `installed.packages()` : permet de voir la liste de vos packages ou vérifier si vous disposez d'un package donnée
+* `update.packages()` : pour de les mettre à jour.
+* `install.packages()` : permet d'installer un package en spécifiant le nom du package comme argument entre parenthèses.
+
+
+```r
+install.packages("tidyverse") # installe l'intégralité du tidyverse
+```
+
+--
+
+Pour *appeler* un package (c'est-à-dire rendre disponible les fonctions qu'il contient pour la session en cours), il vous suffit d'exécuter la fonction `library()` avec le nom du package en argument :
+
+
+```r
+library(tidyverse) # permet de charger d'un coup l'intégralité du tidyverse
+```
+
+Vous noterez que Rstudio suggère automatiquement des packages sous forme d'un menu déroulant, pas besoin de tout taper à chaque fois.
+
+---
+
+
+### Se faire une liste de course
+
+Quand je débute un travail de traitement de données, j'ai pour habitude d'aller voir les packages qui pourraient contenir des fonctions utiles au sujet spécifique qui est le mien.
+
+**Par exemple**
+j'ai récemment travaillé sur les horaires de bibliothèque. Sur ce sujet précis, j'ai identifié des problématiques et types de données puis j'ai cherché les packages ad hoc.
+
+Dans ce cas :
+* *traitement de date et données horaires* =&gt; `lubridate` ;
+* *traitement de chaînes de caractère (avec corrections, etc.)* : `stringr` ;
+* *réalisation de cartes légères* : `sf`, `tmap` et `tmaptools`.
+
+Il existe des packages pour toutes les spécialités et tous les sujets.
+
+
+---
+
+background-image: url("https://media.giphy.com/media/ZHlGzvZb130nm/giphy.gif")
+class: center, top, inverse
+
+# 3. Le script
+
+---
+
+## Le script : votre chaîne de commandes
+
+.pull-left[
+Nous parlons de script pour désigner un fichier texte qui contient une série d'instructions dans un langage donné. Le nom du fichier en question comporte par ailleurs une extension spécifique permettant à votre navigateur d'identifier immédiatement le langage dans lequel il doit être lu.
+
+![](.../img/exemple_script.png)
+]
+
+.pull-right[
+Le script se présente comme une *chaîne de commande* : il vise à conserver une liste d'opérations à exécuter dans un ordre spécifique.
+
+A cet égard, le script comporte des avantages évidents :
+* archivage ;
+* reproductibilité des opérations ;
+* organisation du travail ;
+* historicisation des commandes ;
+* communicabilité des opérations.
+
+Un script peut connaître plusieurs versions, être collaboratif, corrigé, repris et enfin publié. **Le script est l'équivalent informatique de la copie pour le journalisme.**
+]
+
+---
+
+.pull-left[
+### Créer un script
+
+Vous pouvez créer un script :
+* via le menu *File -&gt; New File -&gt; R Script* ;
+* avec le raccourci *Ctrl + Shift + n* / *Cmd + Shift + n*.
+
+Un fichier texte vierge apparaîtra alors dans le panneau supérieur gauche, nommé *"Untitled1"*. Vous pourrez commencer à y écrire (*à l'éditer*) immédiatement dans n'importe quel éditeur de texte.
+
+Dès que vous y avez ajouté quelque chose, **sauvegardez-le** :
+* *Ctrl + s* / *Cmd + s* ;
+* choisissez le dossier de destination (voir la partie *Organiser vos fichiers*) ;
+* nommez-le de manière explicite sans oublier l'extension .R.
+]
+
+.pull-right[
+### Utiliser un script
+
+Vous pouvez utiliser l'interface Rstudio pour lire, éditer et exécuter votre script ligne par ligne ou par portion entière.
+
+Pour exécuter la ou les commandes placées sur une ligne, il vous suffit de vous mettre sur la ligne désiré et d'utiliser le raccourci *Ctrl + Enter / Cmd + Enter*. Le contenu de la ligne apparaît alors dans votre console puis le résultat et / ou les messages associés (warning, erreurs, etc. Nous en reparlerons plus tard)...
+
+Vous pouvez exécuter plusieurs lignes en les sélectionner avec votre curseur. Le raccourci exécutera alors toutes les lignes en surbrillance.
+]
+
+---
+
+.pull-left[#### Les commentaires
+
+Un commentaire (ou *"com"*) écartée explicitement des autres commandes pour ne pas être exécutée (*"évaluée"*). Dans R (comme dans Python et Javascript), on *"commente"* une ligne en la faisant débuter par un *"#"*.
+
+Vous pouvez également utilser le raccourci Rstudio *Ctrl + Shift + c / Cmd + Shift + c* pour commenter ou *décommenter"* plusieurs lignes sélectionner d'un coup :
+
+
+```r
+# install.packages("tidyverse")
+# la ligne précédente ne s'exécutera pas car elle est commentée
+
+update.packages("tidyverse") # celle-ci s'éxecuter jusqu'au #
+```
+]
+
+.pull-left[#### Les parties
+
+Vous pouvez également utiliser la fonctionnalité *"Sections"* de Rstudio pour structurer votre script en parties.
+
+Cette fonction vous permet de créer des séparations dans votre script en insérant des titres précédés de *"##"* et suivi d'au moins *"---"*. Dès lors, vous pouvez "replier" une partie du script pour le cacher ou naviguer d'une partie à l'autre via le menu en bas à gauche du panneau Script :
+
+
+```r
+## Partie 1 - libs ------
+
+library(tidyverse)
+
+## Partie 2 - nettoyage ------
+
+var &lt;- read_csv("../data/file.csv")
+```
+]
+
+---
+
+### Aparté : organiser vos fichiers 1/2
+
+**L'organisation de vos fichiers constitue un levier d'efficacité déterminant dans votre usage de l'informatique en général**, et R n'échappe pas à la règle.
+
+Quelques considérations générales :
+
+#### Dossier dédié
+Je vous demande créer un dossier pour ce cours, facile à trouver, clairement identifié.
+
+#### Projects
+Je vous recommande d'organiser votre travail en projet ;
+
+#### Arborescence
+Je vous recommande d'adopter une *arborescence de projet*, c'est-à-dire d'organiser vos sources et de les ranger dans des dossiers suivant leur nature et leur usage. En pratique, centraliser les fichiers dans un dossier `/data`, les images dans un dossier `/img`, la doc dans un fichier `/doc`, etc. ;
+
+---
+
+### Aparté : organiser vos fichiers 2/2
+
+#### Filepath
+Je vous demande d'utiliser les *chemins de fichier* dans vos scripts pour appeler des fichiers. Ce terme désigne l'adresse de chaque élément dans votre système de fichier (pour en savoir plus sur le [PATH](https://fr.wikipedia.org/wiki/Chemin_d%27acc%C3%A8s#:~:text=En%20informatique%2C%20le%20chemin%20d,dans%20le%20syst%C3%A8me%20de%20fichiers.)).
+
+#### Nomenclature
+Je vous conseille de nommer de manière standard, claire et interopératbles vos fichiers et dossiers. C'est-à-dire :
+  * **pas d'espace dans les titres, JAMAIS !** (remplacez-les par des underscore, "_") ;
+  * pas de caractères spéciaux ;
+  * pas de chiffre en début de titre ;
+  * et enfin : **nommez tout comme si vous deviez retomber dessus dans deux ans**.
+
+Vous trouverez des liens spécifiques dans la documentation du cours sur ce sujet.
+
+---
+
+
+background-image: url("https://media.giphy.com/media/VXCPgZwEP7f1e/giphy.gif")
+class: center, top, inverse
+
+# 4. Conseils pratiques
+
+---
+
+## Commentez tout le temps
+
+Les commentaires vous permettent, entre autres :
+* de marquer les étapes dans votre script ;
+* d'expliciter l'usage d'une fonction ;
+* de sourcer une méthode ;
+* de pointer des problèmes ...
+
+Ce sont de précieux marques-pages ou penses-bêtes qui vous aideront ainsi que celles et ceux avec qui vous partagerez votre code. Suivez donc les conseils des meilleur·es usager·ères de R : [commentez un maximum](https://twitter.com/drob/status/987795355659112453) !
+
+![](.../img/commenting_braininjury.png)
+
+---
+
+## Sachez où trouver des réponses
+
+.pull-left[
+![](.../img/GooglingError.jpg)
+
+]
+
+.pull-right[
+La documentation est surabondante sur R : **si vous rencontrez une erreur en tant que débutant·e, il y a de fortes chances que quelqu'un·e l'ai déjà rencontrée avant vous !**
+
+Soyez-donc méthodique :
+* **lisez vos erreurs** ;
+* cherchez dans la documentation en tapant ? ou ?? avant le nom d'une lib ou d'une fonction dans la console ;
+* copiez-collez le message dans Google ;
+* regardez sur [StackOverflow](https://stackoverflow.com/) ;
+* **documentez vos erreurs** ;
+* une fois que vous avez tout essayé, vous pouvez m'écrire.
+]
+
+---
+.center[
+![](.../img/xkcd_techsupport.png)
+]
+.right[
+.footnote[Source : [xkcd](https://xkcd.com/627/)]
+]
+
+---
+
+
+background-image: url("https://media.giphy.com/media/3otOKv1Z6WUpYwHHwI/giphy.gif")
+class: center, top, inverse
+
+# 5. Formats de données
+
+---
+
+### Les grands types de données
+
+Nous pouvons classer les données sous deux grandes catégories, suivant la manière dont elles sont disponibles :
+
+.pull-left[
+#### les données structurées
+Données dont l'organisation définit les relations au sein d'une base de données.
+
+**Qualité** : lisibles par la machine, compactes, faciles à analyser, manipuler et visualiser ;
+
+**Défaut** : limitées dans leur capacité descriptive, rares, nécessitent un traitement préalables, pas toujours documentées.
+]
+
+.pull-left[
+#### les données non structurées
+Données ne présentant pas de structure identifiable.
+
+**Qualité** : lisibles par l'oeil humain, très abondantes, très variées, riches d'information ;
+
+**Défaut** : difficilement lisibles par la machine (sauf à passer par du machine learning), nécessitent un important travail de tri et pré traitement, volumineuses, peu qualitatives.
+]
+
+---
+
+background-image: url("https://media.giphy.com/media/JPrw5LZ6Qa3D2Eus3K/giphy.gif")
+class: center, top, inverse
+
+## Les données structurées
+
+
+
+---
+
+### Petit exercice pratique
+
+C'est parti :
+* Ouvrez Sublime Text ;
+* Tapez le bloc de texte suivant : `nom,prenom,age`
+* Complétons-le ensemble en gardant la même nomenclature.
+
+--
+
+Puis :
+* Copiez l'intégralité du bloc (Ctrl + A / Ctrl + C) ;
+* Dans votre console R, tapez :
+
+```r
+read.csv(text = "collez votre bloc de texte ici")
+```
+
+Que se passe-t-il ?
+
+---
+
+### Les différents modes de structuration de données
+
+Pour définir les relations entre les données, les différents formats mobilisent deux schémas principaux :
+
+.pull-left[#### La délimitation
+
+Les fichiers délimités utilisent certains signes pour signifier la séparation entre deux types de champs principaux : les cellules et les lignes. Ce sont les formats les plus légers et faciles à lire mais ils s'avèrent limités pour créer des bases de données relationnelles.
+
+Le plus courant est le **CSV** (*comma separated value*) mais on trouvera aussi des TSV, SCSV (parfois appelés abusivement "CSV") et d'autres fantaisies.
+
+
+]
+
+.pull-right[#### Le balisage
+
+Les fichiers balisés reposent sur une double structure :
+* des objets ordonnés en liste ;
+* des pairs "nom" / "valeur" à l'intérieur de chaque objet.
+
+Schématiquement, chaque donnée est "étiquettée" d'un nom partagé avec les données ayant la même fonction dans les autres objets de l'ensemble. Ce qui rend ce type de fichier moins facile à lire par l'oeil humain mais beaucoup plus facile à manier de manière relationnel et peut contenir beaucoup plus de métadonnées.
+
+Les formats les plus courants de ce type sont le **json** et le **xml**.
+]
+
+---
+
+### Critères de choix d'un format de fichier
+
+Tous les formats de fichiers n'ont pas les mêmes avantages. Pour vous aider à mieux comprendre comment arbitrer entre les formats disponibles, voici quelques critères :
+* **interopérabilité** : propension à être réutilisable sans déperdition de données par différents logiciels ;
+* **poids** : espace occupé par la collection de données sur le disque ou le serveur ;
+* **enrichissement** : capacité de stockage de couches supplémentaires de données et de métadonnées ;
+* **licence** : statut du format de fichier sur le plan de la propriété intellectuelle.
+
+--
+
+Car, de même qu'il existe des logiciels propriétaires, il existe des formats propriétaires :
+* **xlsx**, **docx** et **ppt** (entre autres) sont propriétés de Microsoft via Office ;
+* **psd** via Photoshop propriété de Adobe ;
+* **pdf** l'était également jusqu'en 2008 (devenu depuis norme ISO) ;
+* **shp** et ses formats associés (**shx** et cie) sont propriétés d'Esri via le logiciel de cartographie ArcGIS ;
+* etc.
+
+---
+
+#### Le "programme 5 étoiles"
+
+Le format de données n'est pas qu'un enjeu technique : dans une certaine mesure, il s'agit d'une **question politique** en cela que le format choisi déterminant l'accessibilité aux données, il détermine le niveau de transparence pratique d'une organisation.
+
+Dans le cas de l'**open data**, Tim Berners-Lee a schématisé cette relation entre format et ouverture dans sa **[5 stars program](https://5stardata.info/fr/)** :
+
+.center[
+![](https://5stardata.info/images/5-star-steps.png)
+]
+
+---
+
+background-image: url("https://media.giphy.com/media/dBTnKicCH0IiCzbTVM/giphy.gif")
+class: center, top, inverse
+
+## Les données non-structurées
+
+---
+
+Le **scraping** est l'opération consistant à extraire des données d'un format "lisible par l'oeil humain" (*human readable*) pour les rendre "lisibles par la machine" (*machine readable*).
+.pull-left[#### PDF scraping
+
+Il existe deux types de PDF :
+* les PDF textes ;
+* les PDF images.
+
+Dans le premier cas, l'encodage permet de récupérer les caractères et leur disposition pour "réassembler" les tableaux contenus le PDF.
+
+C'est ce que permet [le package `{tabulizer}`](https://github.com/ropensci/tabulizer), que vous pouvez installer direct.
+
+Pour les PDF images, la méthode classique consiste à convertir chaque page en image et passer chaque image par un logiciel d'OCR (*optical character recognition*).
+]
+
+.pull-right[#### HTML scraping
+
+Le HTML scraping s'appuie sur la struture des pages HTML pour constituer des tables. Les librairies ou logiciels lisent les balises des pages web et les ordonnent sous forme de table.
+
+Sous R, le package `{rvest}` permet de scraper des pages web (il s'agira de la 4è partie de ce cours).
+
+.center[
+![](https://github.com/tidyverse/rvest/raw/master/man/figures/logo.png)
+]
+]
+
+---
+
+background-image: url("https://media.giphy.com/media/ARrQFpc6km5eU/giphy.gif")
+class: center, top, inverse
+
+# 6. Lire des données en R
+
+
+---
+
+
+
+
+#### {tidyverse}
+
+.pull-left[
+Le `{tidyverse}` propose une large gamme de fonctions de lecture dans le package `{readr}`. Plus rapides que les fonctions de base, les fonctions de `{readr}` offrent également plus de flexibilité au paramétrage et produisent des `tibble`, un format de données très facile à manipuler.
+
+**Nous adopterons ces fonctions pour ce cours ainsi que la plupart des outils du `tidyverse`**.
+
+Rbase propose nombre de fonctions équivalentes qui surgiront peut-être en autocomplète : `read.csv`, etc. Faîtes gaffe !
+]
+
+.pull-right[
+![](../img/readr_logo.png)
+]
+
+---
+
+### read_csv()
+
+La fonction `read_csv()` permet de lire des données stockées en CSV sous forme de `tibble` (il s'agit en fait d'un cas particlier de `read_delim()`, comme `read_tsv()`).
+
+Cette fonction n'a qu'un seul argument obligatoire : la source des données. Cette source peut être :
+* l'emplacement d'un fichier sur le disque (il s'agira alors d'un path, voire slide suivante) ;
+* l'emplacement d'un fichier sur un serveur (il s'agira alors d'une URL) ;
+* une chaîne de caractère dont les données sont séparées par des virgules (comme dans notre exemple).
+
+Par exemple, vous pouvez charger un CSV publié sur data.gouv.fr (ici [les indicateurs de suivi de l'épidémie de Covid](https://www.data.gouv.fr/fr/datasets/indicateurs-de-suivi-de-lepidemie-de-covid-19/) par le Ministère de la Santé) :
+
+
+```r
+read_csv("https://www.data.gouv.fr/fr/datasets/r/381a9472-ce83-407d-9a64-1b8c23af83df")
+```
+
+```
+## # A tibble: 895 × 5
+##    extract_date tx_incid     R taux_occupation_sae tx_pos
+##    &lt;date&gt;          &lt;dbl&gt; &lt;dbl&gt;               &lt;dbl&gt;  &lt;dbl&gt;
+##  1 2020-03-18      NA       NA                15.2     NA
+##  2 2020-03-19       5.57    NA                19.8     NA
+##  3 2020-03-20       8.40    NA                25.6     NA
+##  4 2020-03-21      11.0     NA                28.7     NA
+##  5 2020-03-22      13.6     NA                33.1     NA
+##  6 2020-03-23      18.3     NA                41.1     NA
+##  7 2020-03-24      23.9     NA                49.5     NA
+##  8 2020-03-25      30.1     NA                58       NA
+##  9 2020-03-26      32.9     NA                66.3     NA
+## 10 2020-03-27      36.9     NA                74.3     NA
+## # ℹ 885 more rows
+```
+
+
+---
+
+### Aparté : le "path"
+
+Le *path* ou *chemin de fichier* est une chaîne de caractère qui décrit l'emplacement d'un fichier dans un système de fichier, qu'il s'agisse de votre machine ou d'un serveur distant. Il existe deux manières de l'écrire :
+
+Le **chemin absolu** chemin unique et permanent qui donne l'emplacement d'un fichier sur le disque d'où qu'on se trouve. Il part de **la racine**, c'est-à-dire de le dossier contenant tous les autres sur votre système.
+
+Par exemple :
+`"home/user/directory/subdir/file.csv"`
+
+Le **chemin relatif** est un chemin particulier qui dépend de l'endroit *"où l'on se trouve"* sur le disque. Il part de l'emplacement, que l'on nomme le plus souvent **working directory** (pour l'obtenir, vous pouvez entrer `getwd()` dans la console).
+
+En reprenant l'exemple précédent, si nous sommes dans le dossier *directory*, le chemin relatif du fichier *file.csv* sera :
+`"./subdir/file.csv"`.
+
+En maintenant une bonne organisation de vos fichiers, vous pourrez appeler vos fichiers via des chemins relatifs et ainsi améliorer la réutilisabilité et la reproductibilité de vos scripts. **C'est la méthode que nous emploierons systématiquement dans ce cours.**
+
+---
+
+#### La sortie de read_csv()
+
+Pour plus de sécurité, il est souvent préférable de télécharger localement un fichier. Téléchargez le fichier des indicateurs et placez-le dans le dossier *data* de votre projet ou du dossier consacré à ce cours. Puis, chargez-le.
+
+Que pouvons-nous dire de ce qui s'affiche dans la console ?
+
+
+```r
+read_csv("../data/table-indicateurs-open-data-france.csv")
+```
+
+```
+## # A tibble: 230 × 5
+##    extract_date tx_incid     R taux_occupation_sae tx_pos
+##    &lt;date&gt;          &lt;dbl&gt; &lt;dbl&gt;               &lt;dbl&gt;  &lt;dbl&gt;
+##  1 2020-03-18      NA       NA                15.2     NA
+##  2 2020-03-19       5.57    NA                19.8     NA
+##  3 2020-03-20       8.40    NA                25.6     NA
+##  4 2020-03-21      11.0     NA                28.7     NA
+##  5 2020-03-22      13.6     NA                33.1     NA
+##  6 2020-03-23      18.3     NA                41.1     NA
+##  7 2020-03-24      23.9     NA                49.5     NA
+##  8 2020-03-25      30.1     NA                58       NA
+##  9 2020-03-26      32.9     NA                66.3     NA
+## 10 2020-03-27      36.9     NA                74.3     NA
+## # ℹ 220 more rows
+```
+
+
+---
+
+#### Arguments utiles
+
+Les fonctions `read_\*` proposent de nombreux arguments pour faciliter la lecture. Voici une sélection des plus utiles :
+* **skip** : permet de "sauter" n lignes (n étant un intéger) ;
+* **col_names** : si TRUE (par défault) considère que la première ligne contient le nom des variables, si FALSE considère qu'il ne contient pas le nom des variables, si un vecteur est fourni, considère que ce vecteur contient le nom à donner aux variables ;
+* **col_types** : si une suite de lettre correspondant aux types de données est fourni, permet de détemriner manuellement le type de données pour chaque variable, voire la liste dans l'aide (par défaut le type est imputé sur la base des 1000 premières lignes) ;
+* **na** : permet de lister dans un vecteur les valeurs à lire comme *"valeurs manquantes"* (`#N/A`) ;
+* **delim** : pour la fonction `read_delim()` permet d'indiquer par une chaîne de caractère le séparateur des données.
+
+---
+
+#### Le "locale"
+
+Un paramètre particulier à maîtriser est **locale**: il indique à la fonction quels réglages par défaut doivent être pris en compte pour les conventions variables d'un pays à l'autre. En pratique : format des dates et heures, marqueurs des décimales et milliers, fuseau horaire et surtout encodage des caractères.
+
+C'est ce dernier point qui risque de vous poser le plus de problème : R étant un langage anglosaxon et américano-centré, ses réglages par défaut auront tendance à mal lire les caractères (dits) spéciaux. A commencer par les lettres accentuées.
+
+
+---
+
+### read_excel()
+
+La fonction `read_excel()` du package `{readxl}` (intégré au `{tidyverse}`) permet de lire les fichiers propriétaires de type Excel : **xls** et **xlsx**. Elle prend le même argument de base du path du fichier et impute le type de fichier (xls ou xlsx) par lui-même. Il nécessite en revanche un argument supplémentaire : **sheet** qui spécifie par une chaîne de caractère le nom de la feuille que l'on souhaite importer.
+
+Il vous faudra donc connaître le nom par avance ou, plus probablement, ouvrir le fichier par aileurs pour le renseigner.
+
+Les fichiers Excel étant d'usage courant, il est bon de savoir maîtriser cette fonction au cas où. Par exemple, pour lire [des données issues du projet de loi de finances 2021](https://www.data.gouv.fr/fr/datasets/projet-de-loi-de-finances-pour-2021-plf-2021-donnees-du-plf-et-des-annexes-projet-annuel-de-performance-pap/#_) :
+
+
+```r
+readxl::read_excel("../data/PLF_2021_Liste_des_taxes_affectees.xlsx", sheet = "taxes affectées")
+```
+
+```
+## # A tibble: 287 × 21
+##    Nature juridique du bénéfici…¹ ...2  ...3  ...4  Rattachement d'un op…² ...6 
+##    &lt;chr&gt;                          &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;                  &lt;chr&gt;
+##  1 Secteur                        Caté… Caté… Numé… Mission                Prog…
+##  2 Secteur social                 Orga… Régi… &lt;NA&gt;  &lt;NA&gt;                   &lt;NA&gt; 
+##  3 Secteur social                 Orga… Mutu… 3029… &lt;NA&gt;                   &lt;NA&gt; 
+##  4 Autres bénéficiaires           Autr… Étab… 4951… &lt;NA&gt;                   &lt;NA&gt; 
+##  5 Secteur social                 Orga… Régi… 1800… &lt;NA&gt;                   &lt;NA&gt; 
+##  6 Secteur local                  Comm… Comm… &lt;NA&gt;  &lt;NA&gt;                   &lt;NA&gt; 
+##  7 Secteur local                  Orga… Orga… &lt;NA&gt;  &lt;NA&gt;                   &lt;NA&gt; 
+##  8 Secteur social                 Orga… Autr… 1800… &lt;NA&gt;                   &lt;NA&gt; 
+##  9 Secteur social                 Orga… Autr… &lt;NA&gt;  &lt;NA&gt;                   &lt;NA&gt; 
+## 10 Organismes d'administration c… Opér… Étab… 5250… Écologie, développeme… 203 …
+## # ℹ 277 more rows
+## # ℹ abbreviated names: ¹​`Nature juridique du bénéficiaire`,
+## #   ²​`Rattachement d'un operateur`
+## # ℹ 15 more variables: `Bénéficiaire de la taxe` &lt;chr&gt;, ...8 &lt;chr&gt;,
+## #   `Taxe affectée` &lt;chr&gt;, ...10 &lt;chr&gt;, ...11 &lt;chr&gt;, ...12 &lt;chr&gt;, ...13 &lt;chr&gt;,
+## #   ...14 &lt;chr&gt;, ...15 &lt;chr&gt;, ...16 &lt;chr&gt;, ...17 &lt;chr&gt;, ...18 &lt;chr&gt;,
+## #   ...19 &lt;chr&gt;, `Référence juridique` &lt;chr&gt;, ...21 &lt;chr&gt;
+```
+
+
+---
+
+### Renommer ses variables
+
+.pull-left[Les galères habituelles sur lesquelles vous tomberez :
+* nomenclatures administratives illisibles ;
+* noms interminables ;
+* accents dans tous les sens ;
+* pire, des espaces ...
+]
+
+.pull-right[Mes conseils pour renommer vos variables :
+1. des termes clairs (en français ou en anglais) ;
+2. des noms courts ;
+3. aucun accent ;
+4. des "_" pour séparer.
+]
+
+Vous pouvez renommer soit en chargeant (avec **col_names**), soit variables par variables, soit avec la fonction `setNames()`. Je vous recommande la première ou troisième option et, surtout, **je vous conseille de renommer à l'aide d'un vecteur** : cela facilitera le traçage des noms de variable.
+
+
+```r
+read_csv2("../data/sports-prix-moyen-dune-cotisation-sportive-adulte-dans-un-club-sportif.csv") %&gt;% 
+  setNames(c("nom_club","cout_cotisation"))
+```
+
+```
+## # A tibble: 31 × 2
+##    nom_club                                              cout_cotisation
+##    &lt;chr&gt;                                                           &lt;dbl&gt;
+##  1 Issy Gym Vitalité                                                 315
+##  2 Issy les Moulineaux Badminton Club 92                             259
+##  3 Issy les Moulineaux Trampoline et Sports Acrobatiques             370
+##  4 ABIMES                                                             NA
+##  5 Avia Club Athlétisme d'Issy les Moulineaux                        193
+##  6 Football Club d'Issy les Moulineaux                               300
+##  7 Free Touch Rugby                                                  100
+##  8 Entente Pongiste Isséenne                                         275
+##  9 Issy Aventure                                                     170
+## 10 Issy Triathlon                                                    375
+## # ℹ 21 more rows
+```
+
+---
+
+#### Aparté : le `%&gt;%`
+
+.center[![](https://github.com/tidyverse/magrittr/raw/master/man/figures/logo.png)]
+
+Le `pipe` est un outil de traitement de données introduit via le package `{magrittr}` et qui permet de passer la sortie d'une fonction en premier argument de la suivante.
+
+Il est accessible sous Rstudio par le raccourci *Ctrl / Cmd + Shift + m*.
+
+Cet outil extrêmement pratique permet de *chaîner* des opérations et d'éviter ainsi d'emboîter les fonctions ou (pire) de multiplier les variables à chaque manipulation. Nous développerons plus longuement les intérêts du pipe et la façon de l'utiliser dans les cours03 #suspense.
+
+---
+
+### Quelques conseils
+
+#### Nomenclature
+Pour les manipuler, vous devrez assigner le résultat de la fonction à une variable. Choisissez, autant que possible, un nom simple, lisible et rapide à taper (vous allez le taper très très souvent ...).
+
+#### Données sources
+Conservez toujours le fichier source original de vos données ainsi qu'une version "non modifiée" dans une variable de votre environnement. Vous serez heureux·ses de les retrouver en cas de fausse manip !
+
+#### Comparez avec la lecture d'un autre programme
+Si vous avez un doute sur la fidélité des données à la source, n'hésitez pas à les ouvrir dans un autre logiciel en parallèle. Cela vous permettra également de cmoprendre certains messages d'erreur (qui peuvent souvent être réglé avec un **skip** ou en réglant le **locale**).
+
+#### Renommez avec des vecteurs
+Je l'ai déjà dit mais la pédagogie est affaire de répétition.
+
+---
+
+background-image: url("https://media.giphy.com/media/zx8gxCl62flTO/giphy.gif")
+class: center, top, inverse
+
+# 7. Introduction au scraping en R
+
+---
+
+background-image: url("https://media.giphy.com/media/KP5J5Ss9moWaI/giphy.gif")
+class: center, top, inverse
+
+## Notions de base du scraping en HTML
+
+
+---
+
+### Rapide introduction au HTML
+
+Le HTML a pour fonction de décrire la structure d'une page web : quand vous ouvrez une page sur Internet (que ce soit en entrant son URL ou en cliquant sur un lien), une requête est envoyée à un serveur qui, en réponse, fourni un fichier HTML correspondant à la page demandée.
+
+Un fichier HTML contient donc un nombre limité d'information : texte, mise en forme, structure de la page, disposition des photos, alignements, couleurs, style ... tout le reste (notamment les contenus multimédias et les feuilles de style), le HTML ne peut que les "appeler" en mentionnant leur emplacement (souvent, une autre URL).
+
+Le HTML fonctionne par un système de balisage, c'est-à-dire une série de codes indiquant le début et la fin de l'application d'un style ou d'une propriété.
+
+
+```r
+&lt;strong&gt;Ce texte sera en gras&lt;/strong&gt;
+```
+
+Certaines balises sont dîtes "autofermantes", c'est-à-dire qu'elles ouvrent et ferment la propriété en même temps. Par exemple :
+
+
+```r
+&lt;img href="mon-image-sur-internet.png"&gt; # fera apparaître une image
+```
+
+
+
+---
+
+### Se balader dans le HTML
+
+.pull-left[#### Via le code source
+
+Tous les navigateurs donnent accès au **code source** de la page, c'est-à-dire au contenu brut du fichier HTML. Ce contenu peut être parcouru, lu, recherche et même téléchargé. Pour y accéder, cliquez droit ou utilisez le raccourci (`Ctrl / Cmd + u` pour Firefox) :
+
+![](../img/code_source.png)
+]
+
+
+.pull-right[#### Via l'inspecteur
+
+Il est également possible de consulter à la partie du code source concernant un élément donnée de la page. Pour cela, les navigateurs proposent un **inspecteur**. Cliquez droit sur un élément et choisissez *"Examiner"* : une barre va alors apparaître en bas de la page contenant les informations relatives à l'élément que vous avez pointé.
+
+![](../img/inspecteur_web.png)
+]
+
+---
+
+### Quelques balises clefs
+
+Deux types de balises vont nous intéresser particulièrement dans le HTML :
+
+.pull-left[#### Les balises de HTML table
+Le HTML permettant de mettre en forme, il est souvent utilisé pour structurer des tables et, par conséquent, contenir des données sous forme tabulaire.
+
+Trois balises structurent une table :
+1. `&lt;table&gt;` : ouvre la table  (elle marque le début du tableau) ;
+2. `&lt;tr&gt;` : pour *table row* marque le début d'une ligne ;
+3. `&lt;td&gt;` : pour *table data* marque le début d'une cellule.
+
+Le HTML code donc une table comme : des cellules, à l'intérieur de lignes, à l'intérieur de tables.
+]
+
+.pull-right[#### Les balises liens
+
+Comme son nom l'indique, le HTML repose sur le principe de l'*hypertexte*. Images, vidéos, liens, sons, etc. sont *"référencés"* dans les balises, souvent comme attribut (c'est-à-dire paramètre de la balise).
+
+La balise `&lt;a&gt;` qui sert à ajouter un lien hypertexte fonctionne ainsi :
+
+
+```r
+&lt;a href="www.url-du-lien.html"&gt;Texte&lt;/a&gt;
+```
+
+Il est courant de récupérer l'attribut `href` en parallèle du contenu de la balise pour constituer une bases de données scrapées depuis une page web.
+]
+
+---
+
+background-image: url("https://media.giphy.com/media/fteuziV4qzK62ctmLN/giphy.gif")
+class: center, top, inverse
+
+## {rvest}
+
+---
+
+### Le "pipeline" rvest
+
+Le scraping avec `{rvest}` se déroule en plusieurs étapes qui nécessite chacune des fonctions différentes. Nous nous concentrerons sur des opérations de scraping simple :
+* le scraping de tables HTML ;
+* la récupération de données structurées par des attributs.
+
+Nous pouvons résumer le *"pipeline"* à trois opérations simples :
+1. la récupération de la page html avec `read_html()` : où l'on récupère le contenu brut de la page HTML cible afin de le traiter ;
+2. le ciblage des balises avec `html_nodes()` : où l'on spécifie le chemin des éléments qui nous intéressent dans la page ;
+3. le traitement : facultatif, il consistera par exemple à lire une table HTML ou à extraire le texte à l'intérieur d'une balise.
+
+.footnote[Il existe beaucoup d'autres pipelines possibles et de fonctions disponibles dans `{rvest}`, je vous renvoie [à la doc](https://rvest.tidyverse.org/) pour les explorer.]
+
+---
+
+#### Lire le HTML
+
+La fonction `read_html()` récupère le contenu brut d'une page HTML à partrir d'une URL (ou d'un fichier HTML ou XML).
+
+Il doit ensuite être traité pour en extraire les données souhaitées.
+
+#### Rappel :
+Si vous ne stockez pas la sortie de `read_html()` dans une variable, vous devrez faire une requête à chaque fois.
+
+
+```r
+read_html("https://www.ipj.eu/parcours-des-anciens/")
+```
+
+```
+## {html_document}
+## &lt;html lang="fr-FR" id="html"&gt;
+## [1] &lt;head&gt;\n&lt;script type="text/javascript"&gt;var ajaxurl = "https://ipj.eu/wp-a ...
+## [2] &lt;body class="page-template-default page page-id-144 loading ehf-footer eh ...
+```
+
+Nous avons donc quatre éléments :
+1. le format du fichier ;
+2. la langue ;
+3. la balise head ;
+4. la balise body (où nous allons fouiller la plupart du temps)
+
+---
+
+### Aparté : le xPath
+
+Comme son nom l'indique, le **[xPath](https://www.w3schools.com/xml/xpath_intro.asp)** sert à décrire un *chemin*Le xPath permet de cibler des "noeuds" dans un document HTML (ou XML) en décrivant leur situation hiérarchique ou leurs attributs.
+
+.center[
+#### (très) Rapide lexique
+]
+.pull-left[**`//` = *"n'importe où"*.** &lt;/br&gt;Exemple : `"//a"` = *"une balise a n'importe où dans la page"* ;
+
+**`/` = *"en dessous / à l'intérieur"*.** &lt;/br&gt;Exemple : `"//a/span"` = *"une balise span dans une balise a"*
+
+**`[@att = 'value]` = *"dont l'attribut att a pour valeur value"*.**
+&lt;/br&gt;Exemple : `"//div[@class='info']"` = *"n'importe quelle balise div dont l'attribut class a pour valeur info"*
+]
+
+.pull-right[**`[n]` = *"la nème occurence"*.** &lt;/br&gt;Exemple : `"//a/span[3]"` = *"la 3è balise span dans une balise a"*
+
+Il existe aussi des fonctions telles que :&lt;/br&gt;
+**`[starts_with('v', @att)]` = *"dont la valeur de l'attribut att commence par v"*.**
+&lt;/br&gt;Exemple : `"//img[starts_with('def', @id)]"` = *"n'importe quelle balise img dont la valeur de l'attribut id commence par def"*
+
+]
+
+---
+
+#### Cibler les bonnes nodes
+
+Une fois le HTML récupéré, vous allez pouvoir le traiter en indiquant le *chemin* des balises qui vous intéressent.
+
+Pour cela, il va vous falloir :
+* repérer dans le code source ou via l'inspecteur les balises à cibler et leurs attributs ;
+* les traduire en requête, soit xPath, soit CSS selector.
+
+Nous privilégierons le xPath (parce que c'est celui que je connais le mieux).
+
+Pour récupérer uniquement le contenu correspondant à notre recherche, nous passerons la sortie de `read_html()` à la fonction `html_nodes()` qui prend un argument principal : `css = "path"` ou `xpath = "path"`.
+
+
+```r
+read_html("https://www.ipj.eu/parcours-des-anciens/") %&gt;% 
+  html_nodes(xpath = "//a[@class='team-member-name']")
+```
+
+```
+## {xml_nodeset (35)}
+##  [1] &lt;a class="team-member-name" href="https://ipj.eu/team/bertrand-hochet/"&gt; ...
+##  [2] &lt;a class="team-member-name" href="https://ipj.eu/team/camille-grenu/"&gt;\n ...
+##  [3] &lt;a class="team-member-name" href="https://ipj.eu/team/caroline-laurent/" ...
+##  [4] &lt;a class="team-member-name" href="https://ipj.eu/team/catherine-chabaud/ ...
+##  [5] &lt;a class="team-member-name" href="https://ipj.eu/team/cecile-megie/"&gt;\n\ ...
+##  [6] &lt;a class="team-member-name" href="https://ipj.eu/team/denis-brogniart/"&gt; ...
+##  [7] &lt;a class="team-member-name" href="https://ipj.eu/team/dominique-tenza/"&gt; ...
+##  [8] &lt;a class="team-member-name" href="https://ipj.eu/team/dorothee-ollieric/ ...
+##  [9] &lt;a class="team-member-name" href="https://ipj.eu/team/emilie-tran-nguyen ...
+## [10] &lt;a class="team-member-name" href="https://ipj.eu/team/eric-nahon/"&gt;\n\t&lt; ...
+## [11] &lt;a class="team-member-name" href="https://ipj.eu/team/faiza-zerouala/"&gt;\ ...
+## [12] &lt;a class="team-member-name" href="https://ipj.eu/team/francois-xavier-pi ...
+## [13] &lt;a class="team-member-name" href="https://ipj.eu/team/frederic-lopez/"&gt;\ ...
+## [14] &lt;a class="team-member-name" href="https://ipj.eu/team/gerard-davet/"&gt;\n\ ...
+## [15] &lt;a class="team-member-name" href="https://ipj.eu/team/hakim-kasmi/"&gt;\n\t ...
+## [16] &lt;a class="team-member-name" href="https://ipj.eu/team/hamdam-mostafavi/" ...
+## [17] &lt;a class="team-member-name" href="https://ipj.eu/team/herve-mathoux/"&gt;\n ...
+## [18] &lt;a class="team-member-name" href="https://ipj.eu/team/jamy-gourmaud/"&gt;\n ...
+## [19] &lt;a class="team-member-name" href="https://ipj.eu/team/jerome-tichit/"&gt;\n ...
+## [20] &lt;a class="team-member-name" href="https://ipj.eu/team/julien-arnaud/"&gt;\n ...
+## ...
+```
+
+---
+
+
+#### Récupérer le contenu 1/3 : le texte
+
+Troisième et dernière étape : il vous faut traiter le contenu de la node.
+
+Pour cela, `{rvest}` offre des fonctions de *parsing* qui vont récupérer des parties spécifiques dans les balises ciblées par `html_nodes()`. Nous évoquerons les trois plus usuelles qui visent à récupérer le texte, la valeur d'un attribut ou une table HTML.
+
+`html_text()` permet de récupérer le contenu textuel à l'intérieur de la balise ciblée par HTML nodes.
+
+Pour éviter de récupérer les éléments de mise en forme, il vous suffit d'ajouter l'argument `trim` avec la valeur `TRUE` :
+
+
+```r
+read_html("https://www.ipj.eu/parcours-des-anciens/") %&gt;% 
+  html_nodes(xpath = "//a[@class='team-member-name']") %&gt;% 
+  html_text(trim = TRUE)
+```
+
+```
+##  [1] "Bertrand Hochet"        "Camille Grenu"          "Caroline Laurent Simon"
+##  [4] "Catherine Chabaud"      "Cécile Mégie"           "Denis Brogniart"       
+##  [7] "Dominique Tenza"        "Dorothée Ollieric"      "Émilie Tran-Nguyen"    
+## [10] "Eric Nahon"             "Faiza Zérouala"         "François-Xavier Pietri"
+## [13] "Frédéric Lopez"         "Gérard Davet"           "Hakim Kasmi"           
+## [16] "Hamdam Mostafavi"       "Hervé Mathoux"          "Jamy Gourmaud"         
+## [19] "Jérôme Tichit"          "Julien Arnaud"          "Julien Bellver"        
+## [22] "Laurence Vignon"        "LUCIE BARBARIN"         "Marianne Théoleyre"    
+## [25] "Nicolas Herbeaux"       "Olivier Delacroix"      "Olivier Truchot"       
+## [28] "Pierre Gallacio"        "Quentin Pommier"        "Richard Franck"        
+## [31] "Silvain Gire"           "Steven Bellery"         "Sylvain Lapoix"        
+## [34] "Thuy-Diep Nguyen"       "Ulysse Thevenon"
+```
+
+---
+
+#### Récupérer le contenu 2/3 : la valeur d'un attribut
+
+`html_attr()` permet quant à lui de récupérer la valeur d'un attribut. C'est particulièrement utile pour les liens ou adresses d'image (via l'attribut `href`) mais cela peut aussi servir à récupérer des informations stockées dans le code (description alternative, style, etc.).
+
+Pour le configurer, il suffit de spécifier pour valeur de l'argument `name` le nom de l'attribut visé :
+
+
+```r
+read_html("https://www.ipj.eu/parcours-des-anciens/") %&gt;% 
+  html_nodes(xpath = "//a[@class='team-member-name']") %&gt;% 
+  html_attr(name = "href")
+```
+
+```
+##  [1] "https://ipj.eu/team/bertrand-hochet/"       
+##  [2] "https://ipj.eu/team/camille-grenu/"         
+##  [3] "https://ipj.eu/team/caroline-laurent/"      
+##  [4] "https://ipj.eu/team/catherine-chabaud/"     
+##  [5] "https://ipj.eu/team/cecile-megie/"          
+##  [6] "https://ipj.eu/team/denis-brogniart/"       
+##  [7] "https://ipj.eu/team/dominique-tenza/"       
+##  [8] "https://ipj.eu/team/dorothee-ollieric/"     
+##  [9] "https://ipj.eu/team/emilie-tran-nguyen/"    
+## [10] "https://ipj.eu/team/eric-nahon/"            
+## [11] "https://ipj.eu/team/faiza-zerouala/"        
+## [12] "https://ipj.eu/team/francois-xavier-pietri/"
+## [13] "https://ipj.eu/team/frederic-lopez/"        
+## [14] "https://ipj.eu/team/gerard-davet/"          
+## [15] "https://ipj.eu/team/hakim-kasmi/"           
+## [16] "https://ipj.eu/team/hamdam-mostafavi/"      
+## [17] "https://ipj.eu/team/herve-mathoux/"         
+## [18] "https://ipj.eu/team/jamy-gourmaud/"         
+## [19] "https://ipj.eu/team/jerome-tichit/"         
+## [20] "https://ipj.eu/team/julien-arnaud/"         
+## [21] "https://ipj.eu/team/julien-bellver/"        
+## [22] "https://ipj.eu/team/laurence-vignon/"       
+## [23] "https://ipj.eu/team/lucie-barbarin/"        
+## [24] "https://ipj.eu/team/marianne-theoleyre/"    
+## [25] "https://ipj.eu/team/nicolas-herbeaux/"      
+## [26] "https://ipj.eu/team/olivier-delacroix/"     
+## [27] "https://ipj.eu/team/olivier-truchot/"       
+## [28] "https://ipj.eu/team/pierre-gallacio/"       
+## [29] "https://ipj.eu/team/quentin-pommier/"       
+## [30] "https://ipj.eu/team/richard-franck/"        
+## [31] "https://ipj.eu/team/silvain-gire/"          
+## [32] "https://ipj.eu/team/steven-bellery/"        
+## [33] "https://ipj.eu/team/sylvain-lapoix/"        
+## [34] "https://ipj.eu/team/thuy-diep-nguyen/"      
+## [35] "https://ipj.eu/team/ulysse-thevenon/"
+```
+
+
+---
+
+#### Récupérer le contenu 3/3 : une table HTML
+
+Pour récupérer une table HTML, il suffit de cibler la node `//table` (avec éventuellement quelques précisions pour récupérer la bonne table).
+
+Ensuite, vous pourrez passer la sortie à la fonction `html_table()` qui va convertir (ou *parser*) la structure de table HTML en data.frame qui sera dès lors utilisable comme une base de données classique.
+
+Parmi les arguments utiles de `html_table()`, notons :
+* `header` (booléen) qui vous permet de spécifier si la table comporte une têtière ou non ;
+* `dec` qui permet de spécifier le marquer des décimales.
+
+
+```r
+wikipedia_5000to7000_sqm &lt;- 
+  read_html("https://en.wikipedia.org/wiki/List_of_political_and_geographic_subdivisions_by_total_area_from_5,000_to_7,000_square_kilometers") %&gt;%
+  html_nodes(xpath = "//table[@class='sortable wikitable']") %&gt;% html_table(header = TRUE)
+```
+
+
+---
+
+background-image: url("https://media.giphy.com/media/PjTSEQy85NKOlZ7b19/giphy.gif")
+class: center, top, inverse
+
+# 7. Stocker vos données
+
+---
+
+## Fonction d'écriture
+
+`{readr}` dispose également de toute une gamme d'outils d'écriture de fichier.
+
+**NE VOUS COMPLIQUEZ PAS LA VIE !**
+`write_csv()` enregistrera vos fichiers dans un format léger et interopérable.
+
+Il n'a que deux arguments obligatoires :
+1. l'origine de la donnée : la variable où vous avez stocké les données à enregistrer. Pour éviter les galères, **assurez-vous que les données sont en format dataframe ou tibble** ;
+2. la destination : le path vers l'endroit où vous voulez enregistrer.
+
+
+```r
+write_csv(tibble(wikipedia_5000to7000_sqm),
+          "../data/wikipedia_5000to7000_sqm.csv")
+```
+
+---
+
+### Le lexique du cours
+
+.pull-left[
+**Argument** : 
+**Commentaire** : 
+**Dataframe** : 
+**Fonction** : 
+**Indexation** : 
+**Interface graphique / GUI** :
+**Ligne de commande / CLI** :
+**Matrice** : 
+**Path** : 
+**Script** : 
+**Variable** :
+1. 
+2. 
+**Vecteur** : 
+
+]
+
+.pull-right[
+**Librairie / library** : 
+**Package** : 
+**Rbase** :
+**Rstudio** : 
+**tidyverse** : 
+]
+
+---
+class: inverse, center, middle
+
+# Merci !
+
+
+Contact : [sylvainlapoix@gmail.com](mailto:sylvainlapoix@gmail.com).
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
