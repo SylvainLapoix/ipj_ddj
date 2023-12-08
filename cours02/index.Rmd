@@ -1,6 +1,6 @@
 ---
 title: "IPJ - Datajournalisme"
-subtitle: "Cours 2 : Nettoyer, manipuler et visualiser des données en R"
+subtitle: "Jour 2 : Nettoyer, manipuler et visualiser des données en R"
 author: "Sylvain Lapoix"
 date: "20/10/2023"
 output:

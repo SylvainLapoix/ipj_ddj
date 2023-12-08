@@ -14,14 +14,11 @@ Ce cours se déroule dans le cadre du master journalisme de l'[Institut Pratique
 ## Programme
 
 
-| Jour | Module | Thématique |
-| :-----: | :-----: |  -----: |
-| 19/10/2023 matin | Cours01 | Introduction à R et à la programmation |
-| 19/10/2023 après-midi | Cours02 | Récupérer et charger des données |
-| 20/10/2023 matin | Cours03 | Nettoyer et manipuler des données |
-| 20/10/2023 après-midi | Cours04 | Analyser des données |
-| 08/12/2020 matin | Cours05 | Visualiser des données en R | 
-| 08/12/2020 après-midi | Cours06 | Introduction à l'analyse exploratoire de données | 
+| Jour | Module | Support | Thématique |
+| :-----: | :-----: | :-----: |  -----: |
+| 19/10/2023 | Cours01 | [cours01](https://sylvainlapoix.github.io/ipj_ddj/cours01/#1) | Introduction à R et à la programmation / Lire des données |
+| 20/10/2023 | Cours02 | [cours02](https://sylvainlapoix.github.io/ipj_ddj/cours02/#1) | Nettoyer, manipuler et visualiser des données |
+| 08/12/2020 | Cours03 | à venir | à venir | 
 
 ------
 
@@ -60,34 +57,19 @@ sudo apt install libxml2-dev
 * {viridis} ;
 * {RColorBrewer}.
 
-
-## Support
-
-* Cours01 : [R, votre nouvel outil](https://sylvainlapoix.github.io/ipj_ddj/cours01/#1)
-* Cours02 : [Sourcer et lire les données en R](https://sylvainlapoix.github.io/ipj_ddj/cours02/#1)
-* Cours03 : [Nettoyer et manipuler des données en R](https://sylvainlapoix.github.io/ipj_ddj/cours03/#1)
-* Cours04 : [Analyse de données en R](https://sylvainlapoix.github.io/ipj_ddj/cours04/#1)
-* Cours05 : [Visualiser des données en R](https://sylvainlapoix.github.io/ipj_ddj/cours05/#1)
-* Cours06 : à venir
-
 ## Bases de données utilisées
 
-### cours02
+### cours01
 * [Indicateurs de suivi de l’épidémie de COVID-19](https://www.data.gouv.fr/fr/datasets/indicateurs-de-suivi-de-lepidemie-de-covid-19/), 2020, Ministère de la Santé ;
 * [Projet de loi de finances pour 2021 (PLF 2021), données du PLF et des annexes projet annuel de performance (PAP)](https://www.data.gouv.fr/fr/datasets/projet-de-loi-de-finances-pour-2021-plf-2021-donnees-du-plf-et-des-annexes-projet-annuel-de-performance-pap/#_), 2020, Ministère de l'économie, des finances et de la relance ;
 * [Clubs sportifs : coût d'une cotisation adulte à Issy-les-Moulineaux](https://www.data.gouv.fr/fr/datasets/clubs-sportifs-cout-dune-cotisation-adulte-a-issy-les-moulineaux/), 2020, Ville d'Issy-les-Moulineaux ;
 
-### cours03
+### cours02
 * [Répertoire national des élus (RNE)](https://www.data.gouv.fr/en/datasets/repertoire-national-des-elus-1/), 2020, Ministère de l'Intérieur.
-
-### cours04
 * [Registre de Preuve de Covoiturage](https://www.data.gouv.fr/en/datasets/trajets-realises-en-covoiturage-registre-de-preuve-de-covoiturage/), 2020 ;
 * [Base Nationale des Lieux de Covoiturage](https://www.data.gouv.fr/en/datasets/base-nationale-des-lieux-de-covoiturage/), Point d'Accès National transport.data.gouv.fr, 2020.
 
-### cours05
-* à venir 
-
-### cours06
+### cours03
 * à venir
 
 

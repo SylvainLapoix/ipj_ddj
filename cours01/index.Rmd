@@ -1,6 +1,6 @@
 ---
 title: "IPJ - Datajournalisme"
-subtitle: "Cours 1 : utiliser R et lire des données"
+subtitle: "Jour 1 : utiliser R et lire des données"
 author: "Sylvain Lapoix"
 date: "19/10/2023"
 output:
