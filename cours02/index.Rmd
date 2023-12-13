@@ -74,6 +74,7 @@ layout: true
 
 </style>
 
+---
 
 background-image: url("https://media.giphy.com/media/fCUCbWXe9JONVsJSUd/giphy.gif")
 class: center, top, inverse
@@ -195,8 +196,10 @@ Pour voir les dernières observations, vous pouvez utiliser sa fonction miroir, 
 Jettons un oeil aux premières lignes du jeu de données 4 du Répertoire national des élu·es (ou RNE) [disponible sur Data.gouv.fr](https://www.data.gouv.fr/en/datasets/repertoire-national-des-elus-1/), consacré aux conseiller·ères régionaux·les :
 
 ```{r head}
-rne4 <- read_tsv("./data/2020-09-01-rne-cr.txt",
-                 skip = 1, locale = locale(encoding = "ISO-8859-1"))
+library(tidyverse)
+
+
+rne4 <- read_csv("https://www.data.gouv.fr/fr/datasets/r/601ef073-d986-4582-8e1a-ed14dc857fba")
 
 head(rne4)
 
@@ -236,10 +239,10 @@ summary(rne4)
 
 La distribution des valeurs est la façon dont l'ensemble des valeurs sont réparties sur la gamme des valeurs possibles dans la base de données. Il s'agit d'un outil d'analyse très utile pour les données numériques mais tout autant pour les chaînes de caractère ou les booléens.
 
-La fonction de `{rbase}` `table()` permet de réaliser une synthèse de la distribution des valeurs pour une variable d'un jeu de données. Elle prend pour argument la base de données suivie de `$nomdelavariable`. Par exemple, si nous souhaitons connaître la distribution des `Libellé de fonction`, nous pouvons appeler cette fonction de la manière suivante :
+La fonction de `{rbase}` `table()` permet de réaliser une synthèse de la distribution des valeurs pour une variable d'un jeu de données. Elle prend pour argument la base de données suivie de `$nomdelavariable`. Par exemple, si nous souhaitons connaître la distribution des `Libellé de la fonction`, nous pouvons appeler cette fonction de la manière suivante :
 
 ```{r table}
-rne4 <- rename(rne4, c("fonction"="Libellé de fonction")) # d'abord, renommons cette variable relou
+rne4 <- rename(rne4, c("fonction"="Libellé de la fonction")) # d'abord, renommons cette variable relou
 
 table(rne4$fonction)
 ```
@@ -523,7 +526,7 @@ Je vous demande de nettoyer cette base de la manière suivante :
 --
 
 ```{r exo_nettoyage}
-rne4_c <- read_tsv("./data/2020-09-01-rne-cr.txt", skip = 1, locale = locale(encoding = "ISO-8859-1")) %>%
+rne4_c <- read_csv("https://www.data.gouv.fr/fr/datasets/r/430e13f9-834b-4411-a1a8-da0b4b6e715c") %>%
   setNames(c("region_code","region_nom","dep_code","dep_nom","elu_nom","elu_prenom",
                    "sexe","date_naissance","profession_code","profession_nom","date_mandat",
                    "fonction","fonction_date")) %>% 
@@ -657,19 +660,7 @@ rne4_c %>%
 ```
 
 
-
 ---
-
-
-background-image: url("https://media.giphy.com/media/ZwF94oelvrAuxIKtRS/giphy.gif")
-class: center, top
-
-### Exercice de synthèse
-
-Je vous demande trouver :
-* un record sur les prénoms ;
-* un record sur l'âge ;
-* un record sur le genre.
 
 background-image: url("https://media.giphy.com/media/yjI5G3pE3NH3O/giphy.gif")
 class: center, top, inverse
@@ -677,7 +668,7 @@ class: center, top, inverse
 # 4. Une grammaire pour les graphs
 
 
-```{r setup, include=FALSE, results='hide', message=FALSE, warning=FALSE}
+```{r setup dataviz, include=FALSE, results='hide', message=FALSE, warning=FALSE}
 
 library(tidyverse)
 
@@ -756,7 +747,7 @@ En informatique, on parle de *"mappage"* et de *"mapper"* pour décrire l'associ
 Jetons un oeil rapide à la liste des produits vendus sous l'étiquette tabac autre que les cigarettes avec la base [Produits du tabac et produits connexes déclarés sur le marché français](https://www.data.gouv.fr/fr/datasets/produits-du-tabac-et-produits-connexes-declares-sur-le-marche-francais), publiée par l'Anses sur data.gouv.fr :
 
 ```{r exemple_gg_cigares&co, fig.height = 4}
-cigares <- read_csv2("./data/liste-fr-autres-produits.csv") %>% 
+cigares <- read_csv2("https://www.data.gouv.fr/fr/datasets/r/2e50e0a2-e81e-45bb-9fe9-3f8a1c835e57") %>% 
   mutate(Longueur_Produit = as.double(Longueur_Produit),
          Diamètre_Produit = as.double(Diamètre_Produit))
 
@@ -839,7 +830,7 @@ Penchons-nous sur les [indicateurs de suivi de l’épidémie de COVID-19](https
 
 ```{r load_covid}
 
-covid <- read_csv("./data/table-indicateurs-open-data-france.csv")
+covid <- read_csv("https://www.data.gouv.fr/fr/datasets/r/381a9472-ce83-407d-9a64-1b8c23af83df")
 
 head(covid)
 ```
@@ -875,7 +866,7 @@ Prenons le jeu de données "cigarettes" pour regarder la relation entre les émi
 
 ```{r load_cigarettes, fig.height = 5}
 
-cigarettes <- read_csv2("./data/liste-fr-cigarettes.csv")
+cigarettes <- read_csv2("https://www.data.gouv.fr/fr/datasets/r/782aeeef-b2d3-4781-b0bf-a23f72a1c798")
 
 glimpse(cigarettes)
 
@@ -1105,28 +1096,6 @@ cigarettes %>%
   geom_point(aes(x = Émission_Goudron, y = Émission_Nicotine)) +
   facet_wrap( ~ Filtre_Produit)
 ```
-
----
-
-### `facet_grid()`
-
-```{r covoit_facet_grid, fig.height = 3, eval = F}
-
-library(lubridate)
-
-covoit <- read_csv2("https://www.data.gouv.fr/en/datasets/r/729ce224-33a4-41b1-9422-2586af67de6e") %>% 
-  mutate(journey_start_wday = wday(journey_start_datetime, label = TRUE, abbr= FALSE,
-                                   week_start = getOption("lubridate.week.start", 1)))
-
-covoit %>% 
-  filter(journey_start_country != "France" | journey_end_country != "France" ) %>% 
-  ggplot(aes(x = journey_start_wday, fill = journey_start_wday)) +
-  geom_bar() +
-  facet_grid(journey_start_country ~ journey_end_country) +
-  theme(legend.position = "none")
-
-```
-
 
 ---
 class: inverse, center, middle

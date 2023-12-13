@@ -4,7 +4,7 @@
     <title>IPJ - Datajournalisme</title>
     <meta charset="utf-8" />
     <meta name="author" content="Sylvain Lapoix" />
-    <script src="libs/header-attrs-2.24/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
   </head>
@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 # IPJ - Datajournalisme
 ]
 .subtitle[
-## Cours 3 : Nettoyer et manipuler des données en R
+## Jour 2 : Nettoyer, manipuler et visualiser des données en R
 ]
 .author[
 ### Sylvain Lapoix
@@ -27,6 +27,69 @@ class: center, middle, inverse, title-slide
 
 ---
 
+
+
+layout: true
+
+&lt;style type="text/css"&gt;
+
+.lr_bg{
+  background: black;
+  color: #f7c600;
+  font-weight: bold;
+}
+
+.pull-left-wide {
+  width: 65%;
+  float: left;
+}
+
+.pull-right-wide {
+  width: 65%;
+  float: right;
+}
+
+.pull-right-narrow {
+  width: 30%;
+  float: right;
+}
+
+.pull-left-narrow {
+  width: 30%;
+  float: left;
+}
+
+.quote {
+  font-family: 'Rokkitt';
+  font-weight: bold;
+  font-style: italic;
+  font-size: 28px;
+}
+
+
+.yellow-h{
+  background: #ffff88;
+}
+
+.blue-h{
+  background: #83c7fc;
+}
+
+
+.white-h{
+   color: #000000;
+   background: #FFFFFF;
+}
+
+.black-h{
+   color: #FFFFFF;
+   background: #000000;
+}
+
+
+&lt;/style&gt;
+
+---
 
 background-image: url("https://media.giphy.com/media/fCUCbWXe9JONVsJSUd/giphy.gif")
 class: center, top, inverse
@@ -77,7 +140,7 @@ Il est également possible d'afficher les sorties visuelles :
 background-image: url("https://media.giphy.com/media/uWzDsAsRm2X9qULHLs/giphy.gif")
 class: center, top, inverse
 
-# 2. Des données "propres"
+# 1. Des données "propres"
 
 ---
 
@@ -141,26 +204,29 @@ Jettons un oeil aux premières lignes du jeu de données 4 du Répertoire nation
 
 
 ```r
-rne4 &lt;- read_tsv("./data/2020-09-01-rne-cr.txt",
-                 skip = 1, locale = locale(encoding = "ISO-8859-1"))
+library(tidyverse)
+
+
+rne4 &lt;- read_csv("https://www.data.gouv.fr/fr/datasets/r/601ef073-d986-4582-8e1a-ed14dc857fba")
 
 head(rne4)
 ```
 
 ```
 ## # A tibble: 6 × 13
-##   `Code région` `Libellé de la région` `Code du département`
-##   &lt;chr&gt;         &lt;chr&gt;                  &lt;chr&gt;                
-## 1 01            Guadeloupe             ZA                   
-## 2 01            Guadeloupe             ZA                   
-## 3 01            Guadeloupe             ZA                   
-## 4 01            Guadeloupe             ZA                   
-## 5 01            Guadeloupe             ZA                   
-## 6 01            Guadeloupe             ZA                   
-## # ℹ 10 more variables: `Libellé de département` &lt;chr&gt;, `Nom de l'élu` &lt;chr&gt;,
+##   `Code du département` `Libellé du département` `Code du canton`
+##   &lt;chr&gt;                 &lt;chr&gt;                    &lt;chr&gt;           
+## 1 01                    Ain                      0101            
+## 2 01                    Ain                      0101            
+## 3 01                    Ain                      0102            
+## 4 01                    Ain                      0102            
+## 5 01                    Ain                      0103            
+## 6 01                    Ain                      0103            
+## # ℹ 10 more variables: `Libellé du canton` &lt;chr&gt;, `Nom de l'élu` &lt;chr&gt;,
 ## #   `Prénom de l'élu` &lt;chr&gt;, `Code sexe` &lt;chr&gt;, `Date de naissance` &lt;chr&gt;,
-## #   `Code profession` &lt;dbl&gt;, `Libellé de la profession` &lt;chr&gt;,
-## #   `Date de début du mandat` &lt;chr&gt;, `Libellé de fonction` &lt;chr&gt;,
+## #   `Code de la catégorie socio-professionnelle` &lt;dbl&gt;,
+## #   `Libellé de la catégorie socio-professionnelle` &lt;chr&gt;,
+## #   `Date de début du mandat` &lt;chr&gt;, `Libellé de la fonction` &lt;chr&gt;,
 ## #   `Date de début de la fonction` &lt;chr&gt;
 ```
 
@@ -178,21 +244,21 @@ glimpse(rne4)
 ```
 
 ```
-## Rows: 1,747
+## Rows: 4,055
 ## Columns: 13
-## $ `Code région`                  &lt;chr&gt; "01", "01", "01", "01", "01", "01", "01…
-## $ `Libellé de la région`         &lt;chr&gt; "Guadeloupe", "Guadeloupe", "Guadeloupe…
-## $ `Code du département`          &lt;chr&gt; "ZA", "ZA", "ZA", "ZA", "ZA", "ZA", "ZA…
-## $ `Libellé de département`       &lt;chr&gt; "GUADELOUPE", "GUADELOUPE", "GUADELOUPE…
-## $ `Nom de l'élu`                 &lt;chr&gt; "ARMOUGOM", "BAILLET", "BAJAZET", "BAPT…
-## $ `Prénom de l'élu`              &lt;chr&gt; "Betty", "Patricia", "Clodomir", "Chris…
-## $ `Code sexe`                    &lt;chr&gt; "F", "F", "M", "M", "M", "F", "M", "M",…
-## $ `Date de naissance`            &lt;chr&gt; "9/7/1965", "17/6/1970", "3/5/1941", "1…
-## $ `Code profession`              &lt;dbl&gt; 118, 33, 162, 33, 74, 143, 31, 37, 105,…
-## $ `Libellé de la profession`     &lt;chr&gt; "Cadres supérieurs (secteur privé) (obs…
-## $ `Date de début du mandat`      &lt;chr&gt; "13/12/2015", "13/12/2015", "13/12/2015…
-## $ `Libellé de fonction`          &lt;chr&gt; NA, NA, NA, "Autre membre commission pe…
-## $ `Date de début de la fonction` &lt;chr&gt; NA, NA, NA, "18/12/2015", NA, NA, NA, N…
+## $ `Code du département`                           &lt;chr&gt; "01", "01", "01", "01"…
+## $ `Libellé du département`                        &lt;chr&gt; "Ain", "Ain", "Ain", "…
+## $ `Code du canton`                                &lt;chr&gt; "0101", "0101", "0102"…
+## $ `Libellé du canton`                             &lt;chr&gt; "Ambérieu-En-Bugey", "…
+## $ `Nom de l'élu`                                  &lt;chr&gt; "BRUNET", "PETIT", "FO…
+## $ `Prénom de l'élu`                               &lt;chr&gt; "Joël", "Aurélie", "Cl…
+## $ `Code sexe`                                     &lt;chr&gt; "M", "F", "F", "M", "M…
+## $ `Date de naissance`                             &lt;chr&gt; "02/05/1955", "29/08/1…
+## $ `Code de la catégorie socio-professionnelle`    &lt;dbl&gt; 23, 38, 35, 38, 38, 46…
+## $ `Libellé de la catégorie socio-professionnelle` &lt;chr&gt; "Chef d'entreprise de …
+## $ `Date de début du mandat`                       &lt;chr&gt; "01/07/2021", "01/07/2…
+## $ `Libellé de la fonction`                        &lt;chr&gt; NA, NA, "9ème Vice-pré…
+## $ `Date de début de la fonction`                  &lt;chr&gt; NA, NA, "01/07/2021", …
 ```
 
 ---
@@ -210,45 +276,40 @@ summary(rne4)
 ```
 
 ```
-##  Code région        Libellé de la région Code du département
-##  Length:1747        Length:1747          Length:1747        
-##  Class :character   Class :character     Class :character   
-##  Mode  :character   Mode  :character     Mode  :character   
-##                                                             
-##                                                             
-##                                                             
-##                                                             
-##  Libellé de département Nom de l'élu       Prénom de l'élu   
-##  Length:1747            Length:1747        Length:1747       
-##  Class :character       Class :character   Class :character  
-##  Mode  :character       Mode  :character   Mode  :character  
-##                                                              
-##                                                              
-##                                                              
-##                                                              
-##   Code sexe         Date de naissance  Code profession 
-##  Length:1747        Length:1747        Min.   : 11.00  
-##  Class :character   Class :character   1st Qu.: 37.00  
-##  Mode  :character   Mode  :character   Median : 86.00  
-##                                        Mean   : 89.95  
-##                                        3rd Qu.:141.00  
-##                                        Max.   :165.00  
-##                                        NA's   :8       
-##  Libellé de la profession Date de début du mandat Libellé de fonction
-##  Length:1747              Length:1747             Length:1747        
-##  Class :character         Class :character        Class :character   
-##  Mode  :character         Mode  :character        Mode  :character   
-##                                                                      
-##                                                                      
-##                                                                      
-##                                                                      
-##  Date de début de la fonction
-##  Length:1747                 
-##  Class :character            
-##  Mode  :character            
-##                              
-##                              
-##                              
+##  Code du département Libellé du département Code du canton    
+##  Length:4055         Length:4055            Length:4055       
+##  Class :character    Class :character       Class :character  
+##  Mode  :character    Mode  :character       Mode  :character  
+##                                                               
+##                                                               
+##                                                               
+##  Libellé du canton  Nom de l'élu       Prénom de l'élu     Code sexe        
+##  Length:4055        Length:4055        Length:4055        Length:4055       
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##  Date de naissance  Code de la catégorie socio-professionnelle
+##  Length:4055        Min.   : 11.00                            
+##  Class :character   1st Qu.: 33.00                            
+##  Mode  :character   Median : 42.00                            
+##                     Mean   : 48.04                            
+##                     3rd Qu.: 74.00                            
+##                     Max.   :165.00                            
+##  Libellé de la catégorie socio-professionnelle Date de début du mandat
+##  Length:4055                                   Length:4055            
+##  Class :character                              Class :character       
+##  Mode  :character                              Mode  :character       
+##                                                                       
+##                                                                       
+##                                                                       
+##  Libellé de la fonction Date de début de la fonction
+##  Length:4055            Length:4055                 
+##  Class :character       Class :character            
+##  Mode  :character       Mode  :character            
+##                                                     
+##                                                     
 ## 
 ```
 
@@ -259,53 +320,51 @@ summary(rne4)
 
 La distribution des valeurs est la façon dont l'ensemble des valeurs sont réparties sur la gamme des valeurs possibles dans la base de données. Il s'agit d'un outil d'analyse très utile pour les données numériques mais tout autant pour les chaînes de caractère ou les booléens.
 
-La fonction de `{rbase}` `table()` permet de réaliser une synthèse de la distribution des valeurs pour une variable d'un jeu de données. Elle prend pour argument la base de données suivie de `$nomdelavariable`. Par exemple, si nous souhaitons connaître la distribution des `Libellé de fonction`, nous pouvons appeler cette fonction de la manière suivante :
+La fonction de `{rbase}` `table()` permet de réaliser une synthèse de la distribution des valeurs pour une variable d'un jeu de données. Elle prend pour argument la base de données suivie de `$nomdelavariable`. Par exemple, si nous souhaitons connaître la distribution des `Libellé de la fonction`, nous pouvons appeler cette fonction de la manière suivante :
 
 
 ```r
-rne4 &lt;- rename(rne4, c("fonction"="Libellé de fonction")) # d'abord, renommons cette variable relou
+rne4 &lt;- rename(rne4, c("fonction"="Libellé de la fonction")) # d'abord, renommons cette variable relou
 
 table(rne4$fonction)
 ```
 
 ```
 ## 
-##             Autre membre commission permanente 
-##                                            288 
-##   Cinquième vice-président du conseil régional 
-##                                             14 
-##     Dixième vice-président du conseil régional 
-##                                             12 
-##    Douzième vice-président du conseil régional 
-##                                             12 
-##    Huitième vice-président du conseil régional 
-##                                             13 
-##    Neuvième vice-président du conseil régional 
-##                                             13 
-##     Onzième vice-président du conseil régional 
-##                                             12 
-##     Premier vice-président du conseil régional 
-##                                             13 
-##                        Président de commission 
-##                                             14 
-##                  Président du conseil régional 
-##                                             14 
-## Quatorzième vice-président du conseil régional 
-##                                             11 
-##   Quatrième vice-président du conseil régional 
-##                                             14 
-##   Quinzième vice-président du conseil régional 
-##                                              9 
-##      Second vice-président du conseil régional 
-##                                             12 
-##    Septième vice-président du conseil régional 
-##                                             14 
-##     Sixième vice-président du conseil régional 
-##                                             15 
-##   Treizième vice-président du conseil régional 
-##                                             11 
-##   Troisième vice-président du conseil régional 
-##                                             12
+##    10ème Vice-président du conseil départemental 
+##                                               71 
+##    11ème Vice-président du conseil départemental 
+##                                               55 
+##    12ème Vice-président du conseil départemental 
+##                                               47 
+##    13ème Vice-président du conseil départemental 
+##                                               28 
+##    14ème Vice-président du conseil départemental 
+##                                               20 
+##    15ème Vice-président du conseil départemental 
+##                                               19 
+##      1er Vice-président du conseil départemental 
+##                                               92 
+##     2ème Vice-président du conseil départemental 
+##                                               92 
+##     3ème Vice-président du conseil départemental 
+##                                               91 
+##     4ème Vice-président du conseil départemental 
+##                                               93 
+##     5ème Vice-président du conseil départemental 
+##                                               91 
+##     6ème Vice-président du conseil départemental 
+##                                               93 
+##     7ème Vice-président du conseil départemental 
+##                                               92 
+##     8ème Vice-président du conseil départemental 
+##                                               86 
+##     9ème Vice-président du conseil départemental 
+##                                               80 
+## Président de commission du conseil départemental 
+##                                               17 
+##               Président du conseil départemental 
+##                                               94
 ```
 
 
@@ -330,7 +389,7 @@ table(is.na(rne4$fonction))
 ```
 ## 
 ## FALSE  TRUE 
-##   503  1244
+##  1161  2894
 ```
 
 Nous avons donc bien un problème sur cette variable, qu'on dira *"mal renseignée"*.
@@ -353,7 +412,7 @@ length(rne4$`Libellé de la région`)
 ```
 
 ```
-## [1] 1747
+## [1] 0
 ```
 
 ```r
@@ -361,7 +420,7 @@ nrow(rne4)
 ```
 
 ```
-## [1] 1747
+## [1] 4055
 ```
 
 ```r
@@ -369,79 +428,7 @@ nchar(rne4$`Libellé de la région`)
 ```
 
 ```
-##    [1] 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10
-##   [25] 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10
-##   [49] 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10
-##   [73] 10 10 10 10 10 10 10 10 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13
-##   [97] 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13
-##  [121] 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13
-##  [145] 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13
-##  [169] 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13
-##  [193] 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13
-##  [217] 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13
-##  [241] 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13
-##  [265] 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13 13
-##  [289] 13 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19
-##  [313] 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19
-##  [337] 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19 19
-##  [361] 19 19 19 19 19 19 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23
-##  [385] 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23
-##  [409] 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23
-##  [433] 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23 23
-##  [457] 23 23 23 23 23 23 23 23 23 23 23  9  9  9  9  9  9  9  9  9  9  9  9  9
-##  [481]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-##  [505]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-##  [529]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-##  [553]  9  9  9  9  9  9  9  9  9  9  9  9  9  9 15 15 15 15 15 15 15 15 15 15
-##  [577] 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15
-##  [601] 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15
-##  [625] 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15
-##  [649] 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15
-##  [673] 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15
-##  [697] 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15
-##  [721] 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15 15  9  9  9  9  9  9  9  9
-##  [745]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-##  [769]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-##  [793]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-##  [817]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-##  [841]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-##  [865]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-##  [889]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9 16 16 16 16 16 16 16
-##  [913] 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16
-##  [937] 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16
-##  [961] 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16
-##  [985] 16 16 16 16 16 16 16 16 16 16 16 16 16 16  8  8  8  8  8  8  8  8  8  8
-## [1009]  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8
-## [1033]  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8
-## [1057]  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8  8
-## [1081]  8 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18
-## [1105] 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18
-## [1129] 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18
-## [1153] 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18
-## [1177] 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18
-## [1201] 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18
-## [1225] 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18
-## [1249] 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18 18  9  9  9  9  9  9  9
-## [1273]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-## [1297]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-## [1321]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-## [1345]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-## [1369]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-## [1393]  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9  9
-## [1417]  9  9  9  9 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
-## [1441] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
-## [1465] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
-## [1489] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
-## [1513] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
-## [1537] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
-## [1561] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
-## [1585] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
-## [1609] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 26 26 26 26 26 26 26 26
-## [1633] 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26
-## [1657] 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26
-## [1681] 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26
-## [1705] 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26
-## [1729] 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26 26
+## integer(0)
 ```
 
 
@@ -495,7 +482,7 @@ vecteur &gt; 10
 background-image: url("https://media.giphy.com/media/PmABbbUe3IqUKSOIBV/giphy.gif")
 class: center, top, inverse
 
-# 3. Trier et organiser ses données
+# 2. Trier et organiser ses données
 
 ---
 
@@ -515,20 +502,20 @@ rne4 %&gt;% filter(sexe == "F")
 ```
 
 ```
-## # A tibble: 838 × 13
-##    region_code region_nom dep_code dep_nom    elu_nom           elu_prenom sexe 
-##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;             &lt;chr&gt;      &lt;chr&gt;
-##  1 01          Guadeloupe ZA       GUADELOUPE ARMOUGOM          Betty      F    
-##  2 01          Guadeloupe ZA       GUADELOUPE BAILLET           Patricia   F    
-##  3 01          Guadeloupe ZA       GUADELOUPE BONDOT            Gersiane   F    
-##  4 01          Guadeloupe ZA       GUADELOUPE CELIGNY           Maguy      F    
-##  5 01          Guadeloupe ZA       GUADELOUPE CEROL             Nita       F    
-##  6 01          Guadeloupe ZA       GUADELOUPE CONVERTY-VEROIX   Ginette    F    
-##  7 01          Guadeloupe ZA       GUADELOUPE DAGONIA           Sylvie     F    
-##  8 01          Guadeloupe ZA       GUADELOUPE DECASTEL          Monique, … F    
-##  9 01          Guadeloupe ZA       GUADELOUPE DESTOUCHES        Annick     F    
-## 10 01          Guadeloupe ZA       GUADELOUPE FAITHFUL-VELAYOU… Lucianne   F    
-## # ℹ 828 more rows
+## # A tibble: 2,029 × 13
+##    region_code region_nom dep_code dep_nom              elu_nom elu_prenom sexe 
+##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;                &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;
+##  1 01          Ain        0101     Ambérieu-En-Bugey    PETIT   Aurélie    F    
+##  2 01          Ain        0102     Attignat             FOURNI… Clotilde   F    
+##  3 01          Ain        0103     Valserhône           OLLIET  Anne-Laure F    
+##  4 01          Ain        0104     Belley               BOREL   Aurélie    F    
+##  5 01          Ain        0105     Bourg-En-Bresse-1    BERTRA… Hélène     F    
+##  6 01          Ain        0106     Bourg-En-Bresse-2    CÉDILE… Hélène     F    
+##  7 01          Ain        0107     Ceyzériat            TABOUR… Martine    F    
+##  8 01          Ain        0108     Châtillon-Sur-Chala… CHMARA  Patricia   F    
+##  9 01          Ain        0109     Gex                  BAUDE   Véronique  F    
+## 10 01          Ain        0110     Plateau d'Hauteville MEURIAU Annie      F    
+## # ℹ 2,019 more rows
 ## # ℹ 6 more variables: date_naissance &lt;chr&gt;, profession_code &lt;dbl&gt;,
 ## #   profession_nom &lt;chr&gt;, date_mandat &lt;chr&gt;, fonction &lt;chr&gt;,
 ## #   fonction_date &lt;chr&gt;
@@ -548,16 +535,11 @@ rne4 %&gt;% filter(fonction == "Président du conseil régional",
 ```
 
 ```
-## # A tibble: 4 × 13
-##   region_code region_nom              dep_code dep_nom  elu_nom elu_prenom sexe 
-##   &lt;chr&gt;       &lt;chr&gt;                   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;
-## 1 11          Île-de-France           78       YVELINES PECRES… Valérie    F    
-## 2 27          Bourgogne-Franche-Comté 25       DOUBS    DUFAY   Marie-Gui… F    
-## 3 52          Pays de la Loire        72       SARTHE   MORANÇ… Christelle F    
-## 4 76          Occitanie               31       HAUTE G… DELGA   Carole     F    
-## # ℹ 6 more variables: date_naissance &lt;chr&gt;, profession_code &lt;dbl&gt;,
-## #   profession_nom &lt;chr&gt;, date_mandat &lt;chr&gt;, fonction &lt;chr&gt;,
-## #   fonction_date &lt;chr&gt;
+## # A tibble: 0 × 13
+## # ℹ 13 variables: region_code &lt;chr&gt;, region_nom &lt;chr&gt;, dep_code &lt;chr&gt;,
+## #   dep_nom &lt;chr&gt;, elu_nom &lt;chr&gt;, elu_prenom &lt;chr&gt;, sexe &lt;chr&gt;,
+## #   date_naissance &lt;chr&gt;, profession_code &lt;dbl&gt;, profession_nom &lt;chr&gt;,
+## #   date_mandat &lt;chr&gt;, fonction &lt;chr&gt;, fonction_date &lt;chr&gt;
 ```
 
 ---
@@ -574,20 +556,20 @@ rne4 %&gt;% filter(region_code %in% c("11","27","44"))
 ```
 
 ```
-## # A tibble: 479 × 13
-##    region_code region_nom    dep_code dep_nom elu_nom      elu_prenom sexe 
-##    &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;
-##  1 11          Île-de-France 75       PARIS   ANDROUËT     Mathilde   F    
-##  2 11          Île-de-France 75       PARIS   ANSEL        Maxence    F    
-##  3 11          Île-de-France 75       PARIS   BARIANI      Didier     M    
-##  4 11          Île-de-France 75       PARIS   BAYOU        Julien     M    
-##  5 11          Île-de-France 75       PARIS   BENHAIM      Frédéric   M    
-##  6 11          Île-de-France 75       PARIS   BERTHOUT     Florence   F    
-##  7 11          Île-de-France 75       PARIS   BOHBOT       Jack-Yves  M    
-##  8 11          Île-de-France 75       PARIS   BÜRKLI       Delphine   F    
-##  9 11          Île-de-France 75       PARIS   CAPLIEZ      Stéphane   M    
-## 10 11          Île-de-France 75       PARIS   CARREY-CONTE Fanélie    F    
-## # ℹ 469 more rows
+## # A tibble: 146 × 13
+##    region_code region_nom dep_code dep_nom            elu_nom elu_prenom   sexe 
+##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;              &lt;chr&gt;   &lt;chr&gt;        &lt;chr&gt;
+##  1 11          Aude       1101     La Piège au Razès  BOURREL Marie-Chris… F    
+##  2 11          Aude       1101     La Piège au Razès  VIOLA   André        M    
+##  3 11          Aude       1102     Carcassonne-1      BARDOU  Magali       F    
+##  4 11          Aude       1102     Carcassonne-1      MOURAD  François     M    
+##  5 11          Aude       1103     Carcassonne-2      LECINA  Thierry      M    
+##  6 11          Aude       1103     Carcassonne-2      RIVEL   Tamara       F    
+##  7 11          Aude       1104     Carcassonne-3      CONQUET Maria        F    
+##  8 11          Aude       1104     Carcassonne-3      DEDIES  Daniel       M    
+##  9 11          Aude       1105     Le Bassin chaurien BRUNEL  Eliane       F    
+## 10 11          Aude       1105     Le Bassin chaurien MAUGARD Patrick      M    
+## # ℹ 136 more rows
 ## # ℹ 6 more variables: date_naissance &lt;chr&gt;, profession_code &lt;dbl&gt;,
 ## #   profession_nom &lt;chr&gt;, date_mandat &lt;chr&gt;, fonction &lt;chr&gt;,
 ## #   fonction_date &lt;chr&gt;
@@ -608,20 +590,20 @@ rne4 %&gt;% filter(!(region_code %in% c("11","27","44")))
 ```
 
 ```
-## # A tibble: 1,268 × 13
-##    region_code region_nom dep_code dep_nom    elu_nom  elu_prenom sexe 
-##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;
-##  1 01          Guadeloupe ZA       GUADELOUPE ARMOUGOM Betty      F    
-##  2 01          Guadeloupe ZA       GUADELOUPE BAILLET  Patricia   F    
-##  3 01          Guadeloupe ZA       GUADELOUPE BAJAZET  Clodomir   M    
-##  4 01          Guadeloupe ZA       GUADELOUPE BAPTISTE Christian  M    
-##  5 01          Guadeloupe ZA       GUADELOUPE BARDAIL  Jean       M    
-##  6 01          Guadeloupe ZA       GUADELOUPE BONDOT   Gersiane   F    
-##  7 01          Guadeloupe ZA       GUADELOUPE BREDENT  Georges    M    
-##  8 01          Guadeloupe ZA       GUADELOUPE BRUDEY   Hilaire    M    
-##  9 01          Guadeloupe ZA       GUADELOUPE CELIGNY  Maguy      F    
-## 10 01          Guadeloupe ZA       GUADELOUPE CEROL    Nita       F    
-## # ℹ 1,258 more rows
+## # A tibble: 3,909 × 13
+##    region_code region_nom dep_code dep_nom           elu_nom    elu_prenom sexe 
+##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;             &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;
+##  1 01          Ain        0101     Ambérieu-En-Bugey BRUNET     Joël       M    
+##  2 01          Ain        0101     Ambérieu-En-Bugey PETIT      Aurélie    F    
+##  3 01          Ain        0102     Attignat          FOURNIER   Clotilde   F    
+##  4 01          Ain        0102     Attignat          MARTIN     Walter     M    
+##  5 01          Ain        0103     Valserhône        LARMANJAT  Guy        M    
+##  6 01          Ain        0103     Valserhône        OLLIET     Anne-Laure F    
+##  7 01          Ain        0104     Belley            BOREL      Aurélie    F    
+##  8 01          Ain        0104     Belley            HEDON      Jean-Yves  M    
+##  9 01          Ain        0105     Bourg-En-Bresse-1 BERTRAND-… Hélène     F    
+## 10 01          Ain        0105     Bourg-En-Bresse-1 MORAND     Alexis     M    
+## # ℹ 3,899 more rows
 ## # ℹ 6 more variables: date_naissance &lt;chr&gt;, profession_code &lt;dbl&gt;,
 ## #   profession_nom &lt;chr&gt;, date_mandat &lt;chr&gt;, fonction &lt;chr&gt;,
 ## #   fonction_date &lt;chr&gt;
@@ -642,20 +624,20 @@ rne4 %&gt;% filter(nchar(elu_prenom) &lt; 5)
 ```
 
 ```
-## # A tibble: 112 × 13
-##    region_code region_nom    dep_code dep_nom        elu_nom    elu_prenom sexe 
-##    &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;    &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;
-##  1 01          Guadeloupe    ZA       GUADELOUPE     BARDAIL    Jean       M    
-##  2 01          Guadeloupe    ZA       GUADELOUPE     CEROL      Nita       F    
-##  3 01          Guadeloupe    ZA       GUADELOUPE     CHALUS     Ary        M    
-##  4 01          Guadeloupe    ZA       GUADELOUPE     LOSBAR     Guy        M    
-##  5 04          La Réunion    ZD       LA REUNION     BEDIER     Joé        M    
-##  6 04          La Réunion    ZD       LA REUNION     GAUTHIER   Jack       M    
-##  7 04          La Réunion    ZD       LA REUNION     GUEZELLO   Alin       M    
-##  8 04          La Réunion    ZD       LA REUNION     VIENNE     Axel       M    
-##  9 11          Île-de-France 75       PARIS          WEHRLING   Yann       M    
-## 10 11          Île-de-France 77       SEINE ET MARNE CHAIN-LAR… Anne       F    
-## # ℹ 102 more rows
+## # A tibble: 283 × 13
+##    region_code region_nom dep_code dep_nom              elu_nom elu_prenom sexe 
+##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;                &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;
+##  1 01          Ain        0101     Ambérieu-En-Bugey    BRUNET  Joël       M    
+##  2 01          Ain        0103     Valserhône           LARMAN… Guy        M    
+##  3 01          Ain        0114     Nantua               DEGUER… Jean       M    
+##  4 01          Ain        0117     Replonges            BILLOU… Guy        M    
+##  5 01          Ain        0121     Trévoux              PÉCHOUX Marc       M    
+##  6 02          Aisne      0201     Bohain-En-Vermandois ROJO    Yann       M    
+##  7 02          Aisne      0204     Essômes-Sur-Marne    MARICOT Anne       F    
+##  8 02          Aisne      0206     Villeneuve-sur-Aisne MOUGEN… Paul       M    
+##  9 03          Allier     0303     Commentry            SAINT-… Anne       F    
+## 10 03          Allier     0309     Montluçon-1          MALBET  Marc       M    
+## # ℹ 273 more rows
 ## # ℹ 6 more variables: date_naissance &lt;chr&gt;, profession_code &lt;dbl&gt;,
 ## #   profession_nom &lt;chr&gt;, date_mandat &lt;chr&gt;, fonction &lt;chr&gt;,
 ## #   fonction_date &lt;chr&gt;
@@ -680,20 +662,20 @@ rne4 %&gt;% select(elu_nom, elu_prenom, sexe)
 ```
 
 ```
-## # A tibble: 1,747 × 3
-##    elu_nom  elu_prenom sexe 
-##    &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;
-##  1 ARMOUGOM Betty      F    
-##  2 BAILLET  Patricia   F    
-##  3 BAJAZET  Clodomir   M    
-##  4 BAPTISTE Christian  M    
-##  5 BARDAIL  Jean       M    
-##  6 BONDOT   Gersiane   F    
-##  7 BREDENT  Georges    M    
-##  8 BRUDEY   Hilaire    M    
-##  9 CELIGNY  Maguy      F    
-## 10 CEROL    Nita       F    
-## # ℹ 1,737 more rows
+## # A tibble: 4,055 × 3
+##    elu_nom           elu_prenom sexe 
+##    &lt;chr&gt;             &lt;chr&gt;      &lt;chr&gt;
+##  1 BRUNET            Joël       M    
+##  2 PETIT             Aurélie    F    
+##  3 FOURNIER          Clotilde   F    
+##  4 MARTIN            Walter     M    
+##  5 LARMANJAT         Guy        M    
+##  6 OLLIET            Anne-Laure F    
+##  7 BOREL             Aurélie    F    
+##  8 HEDON             Jean-Yves  M    
+##  9 BERTRAND-MARÉCHAL Hélène     F    
+## 10 MORAND            Alexis     M    
+## # ℹ 4,045 more rows
 ```
 
 
@@ -714,14 +696,14 @@ rne4 %&gt;% select(1:5) %&gt;% head() # affichera les 5 premières variables
 
 ```
 ## # A tibble: 6 × 5
-##   region_code region_nom dep_code dep_nom    elu_nom 
-##   &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;   
-## 1 01          Guadeloupe ZA       GUADELOUPE ARMOUGOM
-## 2 01          Guadeloupe ZA       GUADELOUPE BAILLET 
-## 3 01          Guadeloupe ZA       GUADELOUPE BAJAZET 
-## 4 01          Guadeloupe ZA       GUADELOUPE BAPTISTE
-## 5 01          Guadeloupe ZA       GUADELOUPE BARDAIL 
-## 6 01          Guadeloupe ZA       GUADELOUPE BONDOT
+##   region_code region_nom dep_code dep_nom           elu_nom  
+##   &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;             &lt;chr&gt;    
+## 1 01          Ain        0101     Ambérieu-En-Bugey BRUNET   
+## 2 01          Ain        0101     Ambérieu-En-Bugey PETIT    
+## 3 01          Ain        0102     Attignat          FOURNIER 
+## 4 01          Ain        0102     Attignat          MARTIN   
+## 5 01          Ain        0103     Valserhône        LARMANJAT
+## 6 01          Ain        0103     Valserhône        OLLIET
 ```
 
 ```r
@@ -730,14 +712,14 @@ rne4 %&gt;% select(c("elu_nom","elu_prenom","region_nom")) %&gt;% head()
 
 ```
 ## # A tibble: 6 × 3
-##   elu_nom  elu_prenom region_nom
-##   &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;     
-## 1 ARMOUGOM Betty      Guadeloupe
-## 2 BAILLET  Patricia   Guadeloupe
-## 3 BAJAZET  Clodomir   Guadeloupe
-## 4 BAPTISTE Christian  Guadeloupe
-## 5 BARDAIL  Jean       Guadeloupe
-## 6 BONDOT   Gersiane   Guadeloupe
+##   elu_nom   elu_prenom region_nom
+##   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;     
+## 1 BRUNET    Joël       Ain       
+## 2 PETIT     Aurélie    Ain       
+## 3 FOURNIER  Clotilde   Ain       
+## 4 MARTIN    Walter     Ain       
+## 5 LARMANJAT Guy        Ain       
+## 6 OLLIET    Anne-Laure Ain
 ```
 
 
@@ -756,14 +738,14 @@ rne4 %&gt;% select(starts_with("elu"), date_naissance) %&gt;% head()
 
 ```
 ## # A tibble: 6 × 3
-##   elu_nom  elu_prenom date_naissance
-##   &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;         
-## 1 ARMOUGOM Betty      9/7/1965      
-## 2 BAILLET  Patricia   17/6/1970     
-## 3 BAJAZET  Clodomir   3/5/1941      
-## 4 BAPTISTE Christian  18/6/1962     
-## 5 BARDAIL  Jean       30/5/1951     
-## 6 BONDOT   Gersiane   9/2/1963
+##   elu_nom   elu_prenom date_naissance
+##   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;         
+## 1 BRUNET    Joël       02/05/1955    
+## 2 PETIT     Aurélie    29/08/1982    
+## 3 FOURNIER  Clotilde   01/09/1966    
+## 4 MARTIN    Walter     07/05/1966    
+## 5 LARMANJAT Guy        28/09/1962    
+## 6 OLLIET    Anne-Laure 15/03/1969
 ```
 
 ---
@@ -790,14 +772,14 @@ rne4 %&gt;% mutate(date_naissance = as.Date(date_naissance,
 
 ```
 ## # A tibble: 6 × 13
-##   region_code region_nom dep_code dep_nom    elu_nom  elu_prenom sexe 
-##   &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;
-## 1 01          Guadeloupe ZA       GUADELOUPE ARMOUGOM Betty      F    
-## 2 01          Guadeloupe ZA       GUADELOUPE BAILLET  Patricia   F    
-## 3 01          Guadeloupe ZA       GUADELOUPE BAJAZET  Clodomir   M    
-## 4 01          Guadeloupe ZA       GUADELOUPE BAPTISTE Christian  M    
-## 5 01          Guadeloupe ZA       GUADELOUPE BARDAIL  Jean       M    
-## 6 01          Guadeloupe ZA       GUADELOUPE BONDOT   Gersiane   F    
+##   region_code region_nom dep_code dep_nom           elu_nom   elu_prenom sexe 
+##   &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;             &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;
+## 1 01          Ain        0101     Ambérieu-En-Bugey BRUNET    Joël       M    
+## 2 01          Ain        0101     Ambérieu-En-Bugey PETIT     Aurélie    F    
+## 3 01          Ain        0102     Attignat          FOURNIER  Clotilde   F    
+## 4 01          Ain        0102     Attignat          MARTIN    Walter     M    
+## 5 01          Ain        0103     Valserhône        LARMANJAT Guy        M    
+## 6 01          Ain        0103     Valserhône        OLLIET    Anne-Laure F    
 ## # ℹ 6 more variables: date_naissance &lt;date&gt;, profession_code &lt;dbl&gt;,
 ## #   profession_nom &lt;chr&gt;, date_mandat &lt;chr&gt;, fonction &lt;chr&gt;,
 ## #   fonction_date &lt;chr&gt;
@@ -826,12 +808,12 @@ rne4 %&gt;% mutate(date_naissance = as.Date(date_naissance,
 ## # A tibble: 6 × 2
 ##   date_naissance annee_naissance
 ##   &lt;date&gt;                   &lt;dbl&gt;
-## 1 1965-07-09                1965
-## 2 1970-06-17                1970
-## 3 1941-05-03                1941
-## 4 1962-06-18                1962
-## 5 1951-05-30                1951
-## 6 1963-02-09                1963
+## 1 1955-05-02                1955
+## 2 1982-08-29                1982
+## 3 1966-09-01                1966
+## 4 1966-05-07                1966
+## 5 1962-09-28                1962
+## 6 1969-03-15                1969
 ```
 
 
@@ -860,20 +842,20 @@ rne4 %&gt;% mutate(date_naissance = as.Date(date_naissance, format = "%d/%m/%Y")
 ```
 
 ```
-## # A tibble: 1,747 × 2
+## # A tibble: 4,055 × 2
 ##    date_naissance   age
 ##    &lt;date&gt;         &lt;dbl&gt;
-##  1 1965-07-09      58.2
-##  2 1970-06-17      53.3
-##  3 1941-05-03      82.4
-##  4 1962-06-18      61.3
-##  5 1951-05-30      72.3
-##  6 1963-02-09      60.6
-##  7 1953-12-13      69.8
-##  8 1960-03-27      63.5
-##  9 1953-08-12      70.1
-## 10 1963-11-28      59.8
-## # ℹ 1,737 more rows
+##  1 1955-05-02      68.5
+##  2 1982-08-29      41.2
+##  3 1966-09-01      57.2
+##  4 1966-05-07      57.5
+##  5 1962-09-28      61.1
+##  6 1969-03-15      54.7
+##  7 1979-08-07      44.3
+##  8 1962-12-22      60.9
+##  9 1974-09-10      49.2
+## 10 1987-08-04      36.3
+## # ℹ 4,045 more rows
 ```
 
 --
@@ -894,7 +876,7 @@ Je vous demande de nettoyer cette base de la manière suivante :
 
 
 ```r
-rne4_c &lt;- read_tsv("./data/2020-09-01-rne-cr.txt", skip = 1, locale = locale(encoding = "ISO-8859-1")) %&gt;%
+rne4_c &lt;- read_csv("https://www.data.gouv.fr/fr/datasets/r/430e13f9-834b-4411-a1a8-da0b4b6e715c") %&gt;%
   setNames(c("region_code","region_nom","dep_code","dep_nom","elu_nom","elu_prenom",
                    "sexe","date_naissance","profession_code","profession_nom","date_mandat",
                    "fonction","fonction_date")) %&gt;% 
@@ -909,7 +891,7 @@ rne4_c &lt;- read_tsv("./data/2020-09-01-rne-cr.txt", skip = 1, locale = locale(
 background-image: url("https://media.giphy.com/media/xB2DKVtgNiJzZtAYht/giphy.gif")
 class: center, top, inverse
 
-# 4. Produire des synthèses
+# 3. Produire des synthèses
 
 ---
 
@@ -933,21 +915,21 @@ rne4_c %&gt;% group_by(sexe)
 ```
 
 ```
-## # A tibble: 1,747 × 8
+## # A tibble: 1,753 × 8
 ## # Groups:   sexe [2]
-##    region_code region_nom elu_nom  elu_prenom sexe  date_naissance date_mandat
-##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt; &lt;date&gt;         &lt;chr&gt;      
-##  1 01          Guadeloupe ARMOUGOM Betty      F     1965-07-09     13/12/2015 
-##  2 01          Guadeloupe BAILLET  Patricia   F     1970-06-17     13/12/2015 
-##  3 01          Guadeloupe BAJAZET  Clodomir   M     1941-05-03     13/12/2015 
-##  4 01          Guadeloupe BAPTISTE Christian  M     1962-06-18     13/12/2015 
-##  5 01          Guadeloupe BARDAIL  Jean       M     1951-05-30     13/12/2015 
-##  6 01          Guadeloupe BONDOT   Gersiane   F     1963-02-09     13/12/2015 
-##  7 01          Guadeloupe BREDENT  Georges    M     1953-12-13     13/12/2015 
-##  8 01          Guadeloupe BRUDEY   Hilaire    M     1960-03-27     13/12/2015 
-##  9 01          Guadeloupe CELIGNY  Maguy      F     1953-08-12     13/12/2015 
-## 10 01          Guadeloupe CEROL    Nita       F     1963-11-28     13/12/2015 
-## # ℹ 1,737 more rows
+##    region_code region_nom elu_nom    elu_prenom sexe  date_naissance date_mandat
+##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt; &lt;date&gt;         &lt;chr&gt;      
+##  1 01          Guadeloupe ARMOUGOM   Betty Vér… F     1965-07-09     02/07/2021 
+##  2 01          Guadeloupe BAILLET    Patricia   F     1970-06-17     02/07/2021 
+##  3 01          Guadeloupe BARDAIL    Jean       M     1951-05-30     02/07/2021 
+##  4 01          Guadeloupe BITUFWILA  Aurélie    F     1991-08-21     02/07/2021 
+##  5 01          Guadeloupe BONDOT-GA… Gersiane   F     1963-02-09     02/07/2021 
+##  6 01          Guadeloupe BOREL-LIN… Josette    F     1941-08-12     02/07/2021 
+##  7 01          Guadeloupe BRUDEY     Hilaire    M     1960-03-27     02/07/2021 
+##  8 01          Guadeloupe CHALUS     Ary        M     1961-12-06     02/07/2021 
+##  9 01          Guadeloupe CHAMMOUGO… Sylvie     F     1972-07-23     02/07/2021 
+## 10 01          Guadeloupe CHATEAUBON Eddy       M     1971-07-01     02/07/2021 
+## # ℹ 1,743 more rows
 ## # ℹ 1 more variable: age &lt;dbl&gt;
 ```
 
@@ -974,8 +956,8 @@ rne4_c %&gt;% group_by(sexe) %&gt;% summarise(age_moyen = mean(age))
 ## # A tibble: 2 × 2
 ##   sexe  age_moyen
 ##   &lt;chr&gt;     &lt;dbl&gt;
-## 1 F          57.1
-## 2 M          58.1
+## 1 F          52.5
+## 2 M          54.3
 ```
 
 Je souligne ici l'expression *"calculer par sexe"* car elle me semble bien résumer la façon dont fonctionne le *grouping*.
@@ -999,16 +981,16 @@ rne4_c %&gt;% group_by(region_nom, sexe) %&gt;%
 ## # Groups:   region_nom [14]
 ##    region_nom              sexe  age_moyen
 ##    &lt;chr&gt;                   &lt;chr&gt;     &lt;dbl&gt;
-##  1 Auvergne-Rhône-Alpes    F          55.8
-##  2 Auvergne-Rhône-Alpes    M          57.8
-##  3 Bourgogne-Franche-Comté F          57.4
-##  4 Bourgogne-Franche-Comté M          55.6
-##  5 Bretagne                F          57.9
-##  6 Bretagne                M          56.7
-##  7 Centre-Val de Loire     F          57.4
-##  8 Centre-Val de Loire     M          59.7
-##  9 Grand Est               F          57.7
-## 10 Grand Est               M          57.9
+##  1 Auvergne-Rhône-Alpes    F          53.0
+##  2 Auvergne-Rhône-Alpes    M          53.6
+##  3 Bourgogne-Franche-Comté F          54.3
+##  4 Bourgogne-Franche-Comté M          57.4
+##  5 Bretagne                F          52.5
+##  6 Bretagne                M          53.0
+##  7 Centre-Val De Loire     F          51.3
+##  8 Centre-Val De Loire     M          54.0
+##  9 Grand Est               F          51.7
+## 10 Grand Est               M          55.2
 ## # ℹ 18 more rows
 ```
 
@@ -1024,21 +1006,21 @@ rne4 %&gt;% group_by(region_nom, sexe) %&gt;% summarise(n = n())
 ```
 
 ```
-## # A tibble: 28 × 3
-## # Groups:   region_nom [14]
+## # A tibble: 190 × 3
+## # Groups:   region_nom [95]
 ##    region_nom              sexe      n
 ##    &lt;chr&gt;                   &lt;chr&gt; &lt;int&gt;
-##  1 Auvergne-Rhône-Alpes    F       100
-##  2 Auvergne-Rhône-Alpes    M       104
-##  3 Bourgogne-Franche-Comté F        47
-##  4 Bourgogne-Franche-Comté M        54
-##  5 Bretagne                F        40
-##  6 Bretagne                M        43
-##  7 Centre-Val de Loire     F        34
-##  8 Centre-Val de Loire     M        43
-##  9 Grand Est               F        81
-## 10 Grand Est               M        88
-## # ℹ 18 more rows
+##  1 Ain                     F        24
+##  2 Ain                     M        23
+##  3 Aisne                   F        21
+##  4 Aisne                   M        21
+##  5 Allier                  F        19
+##  6 Allier                  M        19
+##  7 Alpes-De-Haute-Provence F        15
+##  8 Alpes-De-Haute-Provence M        15
+##  9 Alpes-Maritimes         F        27
+## 10 Alpes-Maritimes         M        27
+## # ℹ 180 more rows
 ```
 
 ---
@@ -1053,20 +1035,20 @@ rne4 %&gt;% count(region_nom, sexe)
 ```
 
 ```
-## # A tibble: 28 × 3
+## # A tibble: 190 × 3
 ##    region_nom              sexe      n
 ##    &lt;chr&gt;                   &lt;chr&gt; &lt;int&gt;
-##  1 Auvergne-Rhône-Alpes    F       100
-##  2 Auvergne-Rhône-Alpes    M       104
-##  3 Bourgogne-Franche-Comté F        47
-##  4 Bourgogne-Franche-Comté M        54
-##  5 Bretagne                F        40
-##  6 Bretagne                M        43
-##  7 Centre-Val de Loire     F        34
-##  8 Centre-Val de Loire     M        43
-##  9 Grand Est               F        81
-## 10 Grand Est               M        88
-## # ℹ 18 more rows
+##  1 Ain                     F        24
+##  2 Ain                     M        23
+##  3 Aisne                   F        21
+##  4 Aisne                   M        21
+##  5 Allier                  F        19
+##  6 Allier                  M        19
+##  7 Alpes-De-Haute-Provence F        15
+##  8 Alpes-De-Haute-Provence M        15
+##  9 Alpes-Maritimes         F        27
+## 10 Alpes-Maritimes         M        27
+## # ℹ 180 more rows
 ```
 
 ---
@@ -1100,20 +1082,20 @@ rne4_c %&gt;%
 ## # Groups:   region_nom [14]
 ##    region_nom                 sexe  age_moyen
 ##    &lt;chr&gt;                      &lt;chr&gt;     &lt;dbl&gt;
-##  1 Bourgogne-Franche-Comté    M          55.6
-##  2 Hauts-de-France            M          55.9
-##  3 Île-de-France              M          56.1
-##  4 Bretagne                   M          56.7
-##  5 Pays de la Loire           M          57.1
-##  6 Auvergne-Rhône-Alpes       M          57.8
-##  7 Grand Est                  M          57.9
-##  8 Normandie                  M          58.5
-##  9 Provence-Alpes-Côte d'Azur M          58.6
-## 10 Nouvelle-Aquitaine         M          59.3
-## 11 Centre-Val de Loire        M          59.7
-## 12 Occitanie                  M          59.9
-## 13 La Réunion                 M          64.7
-## 14 Guadeloupe                 M          65.2
+##  1 Île-De-France              M          51.4
+##  2 Hauts-De-France            M          52.4
+##  3 Bretagne                   M          53.0
+##  4 Normandie                  M          53.3
+##  5 Auvergne-Rhône-Alpes       M          53.6
+##  6 Occitanie                  M          53.9
+##  7 Centre-Val De Loire        M          54.0
+##  8 Nouvelle-Aquitaine         M          54.3
+##  9 Pays De La Loire           M          54.6
+## 10 Grand Est                  M          55.2
+## 11 Bourgogne-Franche-Comté    M          57.4
+## 12 Provence-Alpes-Cote D'Azur M          58.4
+## 13 La Réunion                 M          58.6
+## 14 Guadeloupe                 M          58.8
 ```
 
 ---
@@ -1138,71 +1120,510 @@ rne4_c %&gt;%
 ## # A tibble: 14 × 3
 ##    region_nom                 sexe  age_moyen
 ##    &lt;chr&gt;                      &lt;chr&gt;     &lt;dbl&gt;
-##  1 Bourgogne-Franche-Comté    M          55.6
-##  2 Hauts-de-France            M          55.9
-##  3 Île-de-France              M          56.1
-##  4 Bretagne                   M          56.7
-##  5 Pays de la Loire           M          57.1
-##  6 Auvergne-Rhône-Alpes       M          57.8
-##  7 Grand Est                  M          57.9
-##  8 Normandie                  M          58.5
-##  9 Provence-Alpes-Côte d'Azur M          58.6
-## 10 Nouvelle-Aquitaine         M          59.3
-## 11 Centre-Val de Loire        M          59.7
-## 12 Occitanie                  M          59.9
-## 13 La Réunion                 M          64.7
-## 14 Guadeloupe                 M          65.2
+##  1 Île-De-France              M          51.4
+##  2 Hauts-De-France            M          52.4
+##  3 Bretagne                   M          53.0
+##  4 Normandie                  M          53.3
+##  5 Auvergne-Rhône-Alpes       M          53.6
+##  6 Occitanie                  M          53.9
+##  7 Centre-Val De Loire        M          54.0
+##  8 Nouvelle-Aquitaine         M          54.3
+##  9 Pays De La Loire           M          54.6
+## 10 Grand Est                  M          55.2
+## 11 Bourgogne-Franche-Comté    M          57.4
+## 12 Provence-Alpes-Cote D'Azur M          58.4
+## 13 La Réunion                 M          58.6
+## 14 Guadeloupe                 M          58.8
 ```
 
 
+---
+
+background-image: url("https://media.giphy.com/media/yjI5G3pE3NH3O/giphy.gif")
+class: center, top, inverse
+
+# 4. Une grammaire pour les graphs
+
+
+
+
+
+---
+
+## Aux origines de {ggplot2}
+
+.pull-left[
+Le package `{ggplot2}` repose sur l'article [A layered grammar of graphics](https://vita.had.co.nz/papers/layered-grammar.html), publié en 2010 par Hadley Wickham (créateur du {tidyverse}). Cette publication se veut une version améliorée et open source du Grammar of graphics, publié en 2006 par Leland Wilkinson.
+
+Ces deux études poursuivaient le même but : formaliser la production des graphs comme une série d'opérations simples.
+]
+
+.pull-right[
+![](./img/wilkinson_vs_wickham.png)
+
+
+Extrait de A layered grammar of graphics, Wickham, 2010.
+]
+
+---
+
+## Une construction "par couche"
+
+.pull-left[
+![](./img/layered_grammar_graphics.png)
+]
+
+.pull-right[
+1. les **data** ;
+2. les **aesthetics** : correspondance entre données et dimensions du graphique (axes, couleurs, formes, etc.) ;
+3. les **échelles** ;
+4. les **geoms** : objets géométriques représentants les points de données (points, lignes, barres, cercles, etc.) ;
+5. les **statistics** : indications statistiques dans la dataviz ;
+6. les **facets** : sous-graphs 
+7. le **système de coordonnées** : cartésien ou polaire ? (nous verrons à quoi ça sert)
+
+]
+
+---
+
+### Les principales composantes de la Grammar of Graphics
+
+![](./img/gg_components.png)
+
+---
+
+### La "grammar of graphics" en pratique
+
+`{ggplot2}` se veut une traduction opérationnelle des concepts de la *layered grammar of graphics*.
+
+En pratique, il suffit pour produire un graph avec cette librairie d'un minimum de trois éléments (**data**, **geom** et **aesthetics**).
+
+
+
+```r
+ggplot(data = &lt;DATA&gt;) + 
+  &lt;GEOM_FUNCTION&gt;(aes(&lt;MAPPINGS&gt;))
+```
+
+
+#### mapping
+Dans le schéma ci-dessus, `mappings` se réfère au fait d'associer une dimension du jeu de données à une dimension esthétique de la dataviz.
+
+En informatique, on parle de *"mappage"* et de *"mapper"* pour décrire l'association de deux données d'ensembles différents.
+
+---
+
+#### Exemple : cigares et cigarillos
+
+Jetons un oeil rapide à la liste des produits vendus sous l'étiquette tabac autre que les cigarettes avec la base [Produits du tabac et produits connexes déclarés sur le marché français](https://www.data.gouv.fr/fr/datasets/produits-du-tabac-et-produits-connexes-declares-sur-le-marche-francais), publiée par l'Anses sur data.gouv.fr :
+
+
+```r
+cigares &lt;- read_csv2("https://www.data.gouv.fr/fr/datasets/r/2e50e0a2-e81e-45bb-9fe9-3f8a1c835e57") %&gt;% 
+  mutate(Longueur_Produit = as.double(Longueur_Produit),
+         Diamètre_Produit = as.double(Diamètre_Produit))
+
+cigares %&gt;% ggplot() +
+  geom_point(aes(x = Longueur_Produit, y = Diamètre_Produit,
+                 color = Type_Produit))
+```
+
+![](index_files/figure-html/exemple_gg_cigares&amp;co-1.png)&lt;!-- --&gt;
+
+
+---
+
+### Les aesthetics disponibles
+
+Outre les deux axes, `x` et `y`, `{ggplot2}` donne accès à toutes les dimensions visuelles du graph via les aesthetics :
+* `color` : pour la couleur des points ;
+* `fill` : pour le remplissage ;
+* `alpha` : pour l'opacité ;
+* `size`: la taille ;
+* `shape` : pour la forme ;
+* `stroke` : la continuité d'un trait.
+
+
+---
+
+### Les aesthetics non mappées
+
+Les dimensions ne sont pas obligatoirement mappée à une variable. Elles peuvent aussi se voir attribuer une valeur arbitraire. Pour cela, il suffit de les renseigner en dehors de l'objet `aes()`. Par exemple :
+
+
+```r
+cigares %&gt;% ggplot() +
+  geom_point(aes(x = Longueur_Produit, y = Diamètre_Produit,
+                 color = Type_Produit), alpha = 0.3, size = 0.5)
+```
+
+![](index_files/figure-html/aes_non_mappees-1.png)&lt;!-- --&gt;
+
+
+---
+
+background-image: url("https://media.giphy.com/media/kcCkg4ao1PTCQiMkpC/giphy.gif")
+class: center, top, inverse
+
+# 5. Les `geoms` de {ggplot}
+
+---
+
+## A chaque `geom` son usage
+
+Chaque `geometry` disponible dans `{ggplot2}` permet de traiter certains types de données et pas d'autres. Nous distinguerons notamment trois grandes catégories :
+1. **les variables catégorielles** : c'est-à-dire les variables qui distinguent un nombre limité de valeurs se rapportant à des groupes Elles peuvent être :
+  * **ordonnées** ;
+  * **non ordonnées**.
+2. **les variables discrètes** : c'est-à-dire les variables numériques dont les valeurs sont en nombre limité sur une échelle ;
+3. **les variables continues** : c'est-à-dire les variables dont les valeurs numériques peuvent prendre un nombre infini de valeur sur une échelle continue (c'est aussi le cas des heures et dates)
+
+---
+
+## Fonctionnement générique des `geom`
+
+Les `geometry` sont ajoutées juste après les données par couche.
+
+Leur forme générique est toujours : `geom_*` où `*` désigne la forme géométrique ajoutée.
+
+Les arguments sont énumérés :
+* dans un objet `aes()` quand ils sont mappés à une variable ;
+* dans la parenthèse quand on souhaite leur assigner une valeur fixe.
+
+Outre les `aesthetics` évoquées plus haut, deux arguments peuvent être utiles :
+* `na.rm` : permet de rendre silencieuse la suppression des NAs ;
+* `position` : permet de spécifier la position des éléments géométriques entre eux (notamment `geom_col()`).
+
+
+---
+
+### Que peut-on faire avec un jeu de données ?
+
+Penchons-nous sur les [indicateurs de suivi de l’épidémie de COVID-19](https://www.data.gouv.fr/fr/datasets/indicateurs-de-suivi-de-lepidemie-de-covid-19/) publiés quotidiennement par le Ministère de la Santé.
+
+
+
+
+```r
+covid &lt;- read_csv("https://www.data.gouv.fr/fr/datasets/r/381a9472-ce83-407d-9a64-1b8c23af83df")
+
+head(covid)
+```
+
+```
+## # A tibble: 6 × 5
+##   extract_date tx_incid     R taux_occupation_sae tx_pos
+##   &lt;date&gt;          &lt;dbl&gt; &lt;dbl&gt;               &lt;dbl&gt;  &lt;dbl&gt;
+## 1 2020-03-18      NA       NA                15.2     NA
+## 2 2020-03-19       5.57    NA                19.8     NA
+## 3 2020-03-20       8.40    NA                25.6     NA
+## 4 2020-03-21      11.0     NA                28.7     NA
+## 5 2020-03-22      13.6     NA                33.1     NA
+## 6 2020-03-23      18.3     NA                41.1     NA
+```
+
+
+---
+
+### geom_line
+
+`geom_line` trace une ligne entre chaque point de données.
+
+Dans l'imaginaire collectif, il invoque deux notions :
+* la continuité dans le temps (suivant l'axe des x) ;
+* la continuité d'un phénomène.
+
+
+```r
+covid %&gt;% ggplot(aes(x = extract_date)) +
+  geom_line(aes(y = tx_incid), color = "blue") +
+  geom_line(aes(y = taux_occupation_sae), linetype = "longdash", color = "red")
+```
+
+![](index_files/figure-html/covid_geom_line-1.png)&lt;!-- --&gt;
+
+---
+
+### geom_point
+
+`geom_point` trace un point par croisement entre deux coordonnées sur les axes `x` et `y`.
+
+A ce titre, il permet d'étudier la relation entre deux variables (donc deux dimensions d'un même phénomène).
+
+Prenons le jeu de données "cigarettes" pour regarder la relation entre les émissions de goudron et de nicotine :
+
+
+```r
+cigarettes &lt;- read_csv2("https://www.data.gouv.fr/fr/datasets/r/782aeeef-b2d3-4781-b0bf-a23f72a1c798")
+
+glimpse(cigarettes)
+```
+
+```
+## Rows: 3,646
+## Columns: 25
+## $ Marché_National_Produit                 &lt;chr&gt; "FR", "FR", "FR", "FR", "FR", …
+## $ Catégorie_Produit                       &lt;chr&gt; "Produit du tabac", "Produit d…
+## $ Type_Produit                            &lt;chr&gt; "Cigarette", "Cigarette", "Cig…
+## $ Code_Référence                          &lt;chr&gt; "1637 ORIGINE [4A27B949A67924C…
+## $ Date_Dernière_Mise_A_Jour_Du_Dossier    &lt;chr&gt; "02/02/2023 15:37:00", "02/02/…
+## $ Nom_Marque_Produit                      &lt;chr&gt; "1637", "1637", "Alluvé", "All…
+## $ `Nom_Sous-type_Marque_Produit`          &lt;chr&gt; "Origine", "Rouge", "tabac", "…
+## $ Filtre_Produit                          &lt;chr&gt; "filtre", "filtre", "filtre", …
+## $ Unités_Conditionnement_Produit          &lt;dbl&gt; 2000, 2000, 4000, 4000, 2000, …
+## $ Type_Conditionnement_Produit            &lt;chr&gt; "Boîte à couvercle supérieur r…
+## $ Type_Numéro_Produit                     &lt;chr&gt; "EAN", "EAN", "GTIN", "GTIN", …
+## $ Numéro_Produit                          &lt;chr&gt; "3258170830010", "370107824371…
+## $ Date_Notification                       &lt;chr&gt; "5/9/2019 08:14:00", "4/1/2022…
+## $ Date_Lancement_Produit                  &lt;chr&gt; "9/9/2019 00:00:00", "1/7/2022…
+## $ Longueur_Produit                        &lt;dbl&gt; 8400, 8400, 10000, 10000, 8300…
+## $ Diamètre_Produit                        &lt;dbl&gt; 782, 780, 540, 540, 778, 778, …
+## $ Poids_Produit                           &lt;dbl&gt; 83000, 85000, 57000, 56000, 99…
+## $ Poids_Tabac_Produit                     &lt;chr&gt; "580.00", "600.00", "410.00", …
+## $ Longueur_Filtre_Produit                 &lt;chr&gt; "27.00", "27.00", "30.00", "30…
+## $ Ventilation_Filtre_Cigarette            &lt;chr&gt; "15.00", "30.00", "30.00", "65…
+## $ Baisse_Pression_Filtre_Cigarette_Fermé  &lt;dbl&gt; 13500, 13000, 21000, 27000, 16…
+## $ Baisse_Pression_Filtre_Cigarette_Ouvert &lt;dbl&gt; 12000, 10000, 14000, 12000, 11…
+## $ Émission_Goudron                        &lt;dbl&gt; 822, 900, 600, 300, 900, 500, …
+## $ Émission_Nicotine                       &lt;chr&gt; "0.56", "0.89", "0.69", "0.30"…
+## $ Émission_CO                             &lt;dbl&gt; 992, 900, 500, 200, 800, 500, …
+```
+
+---
+
+#### Exemple de graph
+
+
+```r
+cigarettes %&gt;%
+  mutate(Émission_Nicotine = as.double(Émission_Nicotine)) %&gt;% 
+  ggplot() +
+  geom_point(aes(x = Émission_Goudron, y = Émission_Nicotine))
+```
+
+![](index_files/figure-html/cigarette_point-1.png)&lt;!-- --&gt;
+
+
+---
+
+#### Attention à l'overplotting !
+
+
+```r
+cigarettes %&gt;% mutate(Émission_Nicotine = as.double(Émission_Nicotine)) %&gt;% 
+  ggplot() +
+  geom_point(aes(x = Émission_Goudron, y = Émission_Nicotine, color =  Nom_Marque_Produit))
+```
+
+![](index_files/figure-html/overplotting_geom_point-1.png)&lt;!-- --&gt;
+
+
+
+---
+
+#### Exemple de "tous les graphs ne marchent pas avec toutes les données"
+
+
+
+```r
+covid %&gt;% ggplot() +
+  geom_point(aes(x = taux_occupation_sae, y = tx_incid, color = extract_date))
+```
+
+![](index_files/figure-html/covid_geom_point-1.png)&lt;!-- --&gt;
+
+---
+
+### geom_bar
+
+Le `geom_bar` trace un graphique de distribution sur une seule dimension. Autrement dit, il calcule d'abord le nombre d'observation par tranches de valeur pour la variable mappée sur `x`. En clair, il visualise un `count()`.
+
+#### Histogramme
+
+Quand on mappe `x` sur une variable continue, il produit un histogramme (dont l'échelle et les fourchettes sont calculées de manière automatique) :
+
+
+```r
+cigarettes %&gt;% mutate(Émission_Nicotine = as.double(Émission_Nicotine)) %&gt;% 
+  ggplot() +
+  geom_bar(aes(x = Émission_Goudron))
+```
+
+![](index_files/figure-html/geom_bar_histogramme-1.png)&lt;!-- --&gt;
+
+
+---
+
+#### Graphique en barre
+
+`geom_bar` peut également mapper une variable catégorielle. Dans ce cas, la fonction tracera une colonne par valeur de la variable. Dans ce cas, on ne parle pas d'histogramme mais de graphique de distribution en colonne :
+
+
+```r
+cigares %&gt;% ggplot() +
+  geom_bar(aes(x = Type_Produit))
+```
+
+![](index_files/figure-html/geom_bar_distrib-1.png)&lt;!-- --&gt;
+
+
+---
+
+### geom_col
+
+La fonction `geom_col` trace une colonne par valeur d'une variable catégorielle passée en `x` dont la hauteur dépend de la variable mappée en `y`. Elle attend donc une variable continue sur l'axe des `y` :
+
+
+```r
+cigares %&gt;% 
+  group_by(Type_Produit) %&gt;%
+  summarise(poids_moyen = mean(Poids_Produit)/1000) %&gt;% 
+  ggplot() +
+  geom_col(aes(x = Type_Produit, y = poids_moyen))
+```
+
+![](index_files/figure-html/geom_col-1.png)&lt;!-- --&gt;
+
 
 ---
 
 
-background-image: url("https://media.giphy.com/media/ZwF94oelvrAuxIKtRS/giphy.gif")
+
+background-image: url("https://media.giphy.com/media/RmfzOLuCJTApa/giphy.gif")
 class: center, top
 
-### Exercice de synthèse
+#### Et encore beaucoup d'autres avec leurs options que vous pourrez découvrir en fouinant du côté de la doc.
 
-Je vous demande trouver :
-* un record sur les prénoms ;
-* un record sur l'âge ;
-* un record sur le genre.
+.footnote[Et notamment du [site officiel de ggplot](https://ggplot2.tidyverse.org/).]
 
 ---
 
-background-image: url("https://media.giphy.com/media/4N5wG6y1RW4ee0pAPY/giphy.gif")
+
+background-image: url("https://media.giphy.com/media/js0dt5JLCU01bvlt7d/giphy.gif")
 class: center, top, inverse
 
-# 5. L'exercice de la semaine
+# 6. Rendons tout ça un peu plus joli
+
+---
+
+### Aparté : stocker un graph
+
+Comme tout ce que ous manipulez dans `R`, les graphiques générés par les fonctions de `{ggplot2}` sont des objets. Ils peuvent donc être stockés dans des variables :
+
+
+```r
+cigares_gpoint &lt;- cigares %&gt;% ggplot() +
+  geom_point(aes(x = Longueur_Produit, y = Diamètre_Produit,
+                 color = Type_Produit))
+
+cigares_gpoint
+```
+
+![](index_files/figure-html/stocker_graph-1.png)&lt;!-- --&gt;
+
+---
+
+### Un peu de couleur !
+
+Vous pouvez manipuler les couleurs de plusieurs manières.
+
+Si le mapping permet de faire correspondre un code couleur à une valeur, de nombreuses options et librairies vous permettent de choisir des échelles de couleur précalculées ou à paramétrer.
+
+---
+
+#### Viridis
+
+Une des librairies les plus célèbres est `{viridis}`, qui propose plusieurs type d'échelles suivant les besoins (continues, catégorielles, adaptées aux diverses formes de daltonisme...).
+
+Plus de détails et d'exemples dans [la page d'introduction à ce package](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html).
+
+
+```r
+library(viridis)
+
+cigares_gpoint + scale_color_viridis(discrete = TRUE)
+```
+
+![](index_files/figure-html/ggplot_viridis-1.png)&lt;!-- --&gt;
 
 
 ---
 
-## Trois faits notables sur les élu·es des départements
+#### `{RColorBrewer}`
 
-Je vous demande de réaliser une exploration du jeu de données des conseillers départementaux [de la base de données RNE](https://www.data.gouv.fr/en/datasets/repertoire-national-des-elus-1/).
 
-Vous utiliserez les techniques présentées ici (et toutes celles qui vous paraîtront pertinentes) pour explorer trois thématiques :
-* le genre ;
-* l'âge ;
-* la profession.
+```r
+library(RColorBrewer)
 
-Pour chaque thématique, vous présenterez une synthèse (dans un chunk de code = un pipeline) qui souligne un fait saillant dans la base.
+cigares_gpoint + scale_colour_brewer(palette = "Set1")
+```
 
-#### Rendu
-Votre travail est demandé en format .Rmd par mail (n'hésitez pas faire plusieurs bouts de code pour le rendre plus lisible).
-
-* le titre du fichier devra être : *"ipj_ddj_exo03_prenomnom.Rmd"* ;
-* le titre de votre mail devra être : *"IPJ - DDJ - rendu exo03"*]
+![](index_files/figure-html/color_brewer-1.png)&lt;!-- --&gt;
 
 ---
 
-background-image: url("https://media.giphy.com/media/3s6GaByTfXDk8RXKDh/giphy.gif")
+### `theme()` : objet à tout paramétrer
+
+L'objet `theme()` permet de régler la majorité des aspects visuels non mappés de vos graphs : fonds, axes, textes, "ticks", titres et sous-titres, etc.
+
+Les arguments de `theme()` doivent être paramétrés selon leur type :
+* `element_line()` ;
+* `element_text()` ;
+* `element_rect()`, etc.
+* `element_blank()` quand vous voulez les supprimer.
+
+---
+
+#### `theme()` : exemple
+
+
+```r
+cigares_gpoint +
+  labs(title = "Rapport longueur ~ diamètre des produits du tabac autres que les cigarettes") +
+  theme(
+  legend.position = "none",
+  panel.grid.major = element_line(colour = "grey50"),
+  plot.background = element_rect(fill = "grey")
+)
+```
+
+![](index_files/figure-html/ggplot_theme-1.png)&lt;!-- --&gt;
+
+
+
+---
+
+background-image: url("https://media.giphy.com/media/l378BzHA5FwWFXVSg/giphy.gif")
 class: center, top, inverse
 
-## La prochaine fois, nous passons à l'analyse
+# 7. Démultiplions nos graphs avec les facets
 
+---
+
+## `facet_*`
+
+Les fonctions de `facet` vous permette de créer un graph par valeur de la variable choisie, suivant les paramètres définis en amont.
+
+En pratique, cela permet d'observer l'effet d'une variable sur votre graph.
+
+Il existe deux fonctions principales :
+* `facet_wrap()` qui prend une seule variable en facet et va organiser les graphs en lignes et colonnes ;
+* `facet_grid()` qui prend une ou deux variables en facet et les dispose en ligne et colonne suivant l'ordre où elles sont appelées.
+
+---
+
+### `facet_wrap()`
+
+
+```r
+cigarettes %&gt;%
+  mutate(Émission_Nicotine = as.double(Émission_Nicotine)) %&gt;% 
+  ggplot() +
+  geom_point(aes(x = Émission_Goudron, y = Émission_Nicotine)) +
+  facet_wrap( ~ Filtre_Produit)
+```
+
+![](index_files/figure-html/cigarettes_facet_filtres-1.png)&lt;!-- --&gt;
 
 ---
 class: inverse, center, middle
